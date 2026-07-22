@@ -1,0 +1,189 @@
+{
+  "brand": {
+    "title": "AARAMBH - The Beginning",
+    "description": "Inspired by Ancient wisdom, guided by Righteous values, driven by Altruism, practiced with Mindfulness, and enriched by Biosophy - the wisdom of life.",
+    "homeAriaLabel": "AARAMBH home"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About AARAMBH",
+    "blogs": "Blogs",
+    "sessions": "Live Sessions",
+    "resources": "Resources",
+    "community": "Community",
+    "contact": "Contact",
+    "future": "Future",
+    "toggleNavigation": "Toggle navigation",
+    "primaryNavigation": "Primary navigation"
+  },
+  "language": {
+    "label": "Language",
+    "ariaLabel": "Select language",
+    "options": {
+      "en": "English",
+      "hi": "Hindi",
+      "mr": "Marathi",
+      "ta": "Tamil",
+      "pa": "Punjabi",
+      "gu": "Gujarati"
+    }
+  },
+  "hero": {
+    "eyebrow": "Learn Better. Live Better. Lead Better.",
+    "brandWord": "AARAMBH",
+    "brandAriaLabel": "AARAMBH",
+    "tagline": "Evidence-based insights for better living, better workplaces, and better education.",
+    "exploreArticles": "Explore Articles",
+    "joinLiveSessions": "Join Live Sessions",
+    "focusAreasAriaLabel": "AARAMBH focus areas",
+    "focusCards": {
+      "health": "Health",
+      "education": "Education",
+      "family": "Family",
+      "workplace": "Workplace"
+    }
+  },
+  "about": {
+    "kicker": "About AARAMBH",
+    "title": "A clear starting point for better decisions.",
+    "description1": "AARAMBH is a knowledge-sharing platform dedicated to helping people lead healthier lives, build stronger workplaces, nurture families, and create better communities.",
+    "description2": "Every article is written with a focus on practical insights, evidence-based understanding, and real-world applicability.",
+    "proof": {
+      "evidenceAware": "Evidence-aware",
+      "practical": "Practical",
+      "humanCentred": "Human-centred"
+    }
+  },
+  "categories": {
+    "kicker": "Explore Categories",
+    "title": "Blogs that meet real life where it happens.",
+    "items": {
+      "healthFitness": {
+        "title": "Health & Fitness",
+        "text": "Simple, evidence-aware habits for stronger bodies and everyday vitality."
+      },
+      "mentalWellbeing": {
+        "title": "Mental Wellbeing",
+        "text": "Practical tools for stress, focus, emotional balance, and resilience."
+      },
+      "parenting": {
+        "title": "Parenting",
+        "text": "Grounded support for families, children, communication, and care."
+      },
+      "workplaceManagement": {
+        "title": "Workplace Management",
+        "text": "Better teams, humane productivity, leadership, and workplace culture."
+      },
+      "education": {
+        "title": "Education",
+        "text": "Learning methods, classroom practices, and lifelong skill-building."
+      },
+      "personalGrowth": {
+        "title": "Personal Growth",
+        "text": "Reflective, realistic ways to build confidence, purpose, and momentum."
+      },
+      "technologyAI": {
+        "title": "Technology & AI for Everyday Life",
+        "text": "Clear guides to use technology wisely at home, work, and school."
+      },
+      "socialWelfare": {
+        "title": "Social Welfare & Awareness",
+        "text": "Community-first perspectives on inclusion, safety, and social change."
+      }
+    }
+  },
+  "articles": {
+    "kicker": "Featured Articles",
+    "title": "Fresh thinking for healthier homes, teams, and classrooms.",
+    "readArticle": "Read article",
+    "items": {
+      "article1": {
+        "category": "Mental Wellbeing",
+        "title": "A Practical Guide to Recognising Burnout Early",
+        "excerpt": "Learn the subtle signals of burnout and small recovery steps that can be used before exhaustion becomes normal.",
+        "readTime": "6 min read"
+      },
+      "article2": {
+        "category": "Education",
+        "title": "How Evidence-Based Learning Improves Retention",
+        "excerpt": "A clear look at retrieval practice, spaced repetition, and feedback loops for students and educators.",
+        "readTime": "8 min read"
+      },
+      "article3": {
+        "category": "Workplace Management",
+        "title": "Building Workplaces Where People Can Think Clearly",
+        "excerpt": "Design meetings, communication, and priorities around attention instead of constant interruption.",
+        "readTime": "7 min read"
+      }
+    }
+  },
+  "liveSessions": {
+    "kicker": "Upcoming Live Sessions",
+    "title": "Learn directly with experts and peers.",
+    "description": "Sessions can become webinars, Q&A rooms, workshops, or community conversations as AARAMBH grows.",
+    "register": "Register",
+    "registerAria": "Register for {{title}}",
+    "items": {
+      "session1": {
+        "date": "18 Jul",
+        "title": "Managing Stress in Daily Life",
+        "host": "Dr. Meera Joshi",
+        "mode": "Live Webinar"
+      },
+      "session2": {
+        "date": "25 Jul",
+        "title": "AI for Teachers and Parents",
+        "host": "AARAMBH Learning Team",
+        "mode": "Interactive Session"
+      },
+      "session3": {
+        "date": "02 Aug",
+        "title": "Creating Healthier Workplace Conversations",
+        "host": "Leadership Circle",
+        "mode": "Panel Talk"
+      }
+    }
+  },
+  "mostRead": {
+    "kicker": "Most Read Articles",
+    "title": "Start with what readers return to most.",
+    "items": {
+      "item1": "10 Daily Habits That Support Long-Term Health",
+      "item2": "Parenting Through Exams Without Creating Fear",
+      "item3": "Using AI Tools Responsibly in Everyday Work",
+      "item4": "The Difference Between Motivation and Discipline"
+    }
+  },
+  "resources": {
+    "kicker": "Download Free Resources",
+    "title": "Useful tools for action, reflection, and planning.",
+    "items": {
+      "resource1": "Healthy Routine Planner",
+      "resource2": "Workplace Meeting Checklist",
+      "resource3": "Parent-Child Conversation Prompts"
+    }
+  },
+  "subscribe": {
+    "kicker": "Subscribe",
+    "title": "Get new articles and session updates.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "button": "Subscribe"
+  },
+  "community": {
+    "kicker": "Community",
+    "title": "Future space for shared learning and support.",
+    "description": "A dedicated community area can later host discussions, groups, expert AMAs, and member-led initiatives."
+  },
+  "footer": {
+    "tagline": "Evidence-based insights for better living, better workplaces, and better education.",
+    "links": {
+      "about": "About",
+      "blogs": "Blogs",
+      "liveSessions": "Live Sessions",
+      "resources": "Resources",
+      "community": "Community"
+    },
+    "copyright": "(c) 2026 AARAMBH. The Beginning."
+  }
+}

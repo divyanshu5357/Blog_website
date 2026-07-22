@@ -1,0 +1,5 @@
+export const resources = [
+  "resource1",
+  "resource2",
+  "resource3",
+];
