@@ -1,6 +1,6 @@
 # 📝 Blog Management System
 
-A modern full-stack Blog Management System built with **React**, **Node.js**, **Express**, and **Prisma ORM**. The application provides a secure admin dashboard for managing blogs, categories, and media while delivering a fast and responsive reading experience for users.
+A modern full-stack Blog Management System built with **React**, **Node.js**, **Express**, **Neon DB**, and **Prisma ORM**. The application provides a secure admin dashboard for managing blogs, categories, and media while delivering a fast and responsive reading experience for users.
 
 Designed with scalability, security, and maintainability in mind, this project follows a client-server architecture with a RESTful API and modern frontend tooling.
 
