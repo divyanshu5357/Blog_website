@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@google/genai": "^2.13.0",
     "@prisma/client": "^6.16.3",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.10.0",
@@ -20,10 +21,13 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.6.0",
+    "express-session": "^1.19.0",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.11.0",
     "multer": "^2.2.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "prisma": "^6.16.3"
   },
   "devDependencies": {

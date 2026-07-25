@@ -29,13 +29,18 @@ export default function Login() {
       const res = await login(form);
 
       localStorage.setItem(
-        "accessToken",
-        res.data.token
-      );
+  "accessToken",
+  res.data.token
+);
 
-      toast.success("Login Successful");
+localStorage.setItem(
+  "user",
+  JSON.stringify(res.data.user)
+);
 
-      navigate("/admin/dashboard");
+toast.success("Login Successful");
+
+navigate("/admin/dashboard");
     } catch (err) {
       toast.error(
         err.response?.data?.message || "Login Failed"

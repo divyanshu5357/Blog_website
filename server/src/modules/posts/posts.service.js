@@ -1,7 +1,7 @@
 import prisma from "../../config/db.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
-
+import { translatePost } from "../../services/gemini.service.js";
 
 
 export const createPostService = async (data, user) => {
@@ -335,10 +335,7 @@ export const getPostById = async (id) => {
     post
   );
 };
-export const getPostBySlugService = async (
-  slug,
-  language = "en"
-) => {
+export const getPostBySlugService = async (slug, language = "en") => {
   const post = await prisma.post.findFirst({
     where: {
       slug,
@@ -358,8 +355,29 @@ export const getPostBySlugService = async (
   if (!post) {
     throw new ApiError(404, "Post not found.");
   }
-if (language !== "en") {
-  const translation =
+await prisma.post.update({
+  where: {
+    id: post.id,
+  },
+  data: {
+    views: {
+      increment: 1,
+    },
+  },
+});
+
+post.views += 1;
+
+  if (language === "en") {
+    return new ApiResponse(
+      200,
+      "Post fetched successfully.",
+      post
+    );
+  }
+
+  // Check if translation already exists
+  const existingTranslation =
     await prisma.postTranslation.findUnique({
       where: {
         postId_language: {
@@ -369,21 +387,46 @@ if (language !== "en") {
       },
     });
 
-  if (translation) {
-    post.title = translation.title;
-    post.excerpt = translation.excerpt;
-    post.content = translation.content;
-    post.seoTitle = translation.seoTitle;
-    post.seoDescription =
-      translation.seoDescription;
+  if (existingTranslation) {
+    post.title = existingTranslation.title;
+    post.excerpt = existingTranslation.excerpt;
+    post.content = existingTranslation.content;
+
+    return new ApiResponse(
+      200,
+      "Translated post fetched successfully.",
+      post
+    );
   }
-}
+
+  // Translate using Gemini
+  const translated = await translatePost(
+    post,
+    language
+  );
+
+  // Save translation
+  await prisma.postTranslation.create({
+    data: {
+      postId: post.id,
+      language,
+      title: translated.title,
+      excerpt: translated.excerpt,
+      content: translated.content,
+    },
+  });
+
+  post.title = translated.title;
+  post.excerpt = translated.excerpt;
+  post.content = translated.content;
+
   return new ApiResponse(
     200,
-    "Post fetched successfully.",
+    "Translated post created successfully.",
     post
   );
 };
+
 export const getPublishedPostsService = async () => {
   const posts = await prisma.post.findMany({
     where: {
@@ -434,5 +477,37 @@ export const getFeaturedPostsService = async () => {
     200,
     "Featured posts fetched successfully.",
     posts
+  );
+};
+export const likePostService = async (slug) => {
+  const post = await prisma.post.findFirst({
+    where: {
+      slug,
+      status: "PUBLISHED",
+    },
+  });
+
+  if (!post) {
+    throw new ApiError(404, "Post not found.");
+  }
+
+  const updated = await prisma.post.update({
+    where: {
+      id: post.id,
+    },
+    data: {
+      likes: {
+        increment: 1,
+      },
+    },
+    select: {
+      likes: true,
+    },
+  });
+
+  return new ApiResponse(
+    200,
+    "Post liked successfully.",
+    updated
   );
 };

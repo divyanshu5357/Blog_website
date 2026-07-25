@@ -79,20 +79,31 @@ export const loginUser = async (data) => {
     throw new ApiError(400, "Email and password are required.");
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+const user = await prisma.user.findUnique({
+  where: {
+    email,
+  },
+});
+
+console.log("Email entered:", email);
+console.log("User found:", !!user);
+
+if (user) {
+  console.log("DB email:", user.email);
+  console.log("DB hash:", user.password);
+}
 
   if (!user) {
     throw new ApiError(401, "Invalid email or password.");
   }
 
-  const isPasswordCorrect = await comparePassword(
-    password,
-    user.password
-  );
+const isPasswordCorrect = await comparePassword(
+  password,
+  user.password
+);
+
+console.log("Password entered:", password);
+console.log("Password match:", isPasswordCorrect);
 
   if (!isPasswordCorrect) {
     throw new ApiError(401, "Invalid email or password.");

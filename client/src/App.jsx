@@ -20,13 +20,15 @@ import Dashboard from "./admin/Dashboard";
 import CategoriesAdmin from "./admin/Categories";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminLayout from "./layouts/AdminLayout";
-
-import Posts  from "./admin/Posts";
 import Users from "./admin/Users";
+import EditUser from "./admin/EditUser";
+import Posts  from "./admin/Posts";
 
 import CategoryPosts from "./pages/CategoryPosts";
 import CreateCategory from "./admin/CreateCategory";
 import EditCategory from "./admin/EditCategory";
+import CreateUser from "./admin/CreateUser";
+import Comments from "./admin/Comments";
 
 function HomePage() {
   return (
@@ -121,7 +123,14 @@ export default function App() {
     </ProtectedRoute>
   }
 />
-
+<Route
+  path="/admin/comments"
+  element={
+    <ProtectedRoute>
+      <Comments />
+    </ProtectedRoute>
+  }
+/>
 </Route>
 <Route
   path="/admin/categories/new"
@@ -140,7 +149,23 @@ export default function App() {
     </ProtectedRoute>
   }
 />
-
+<Route
+  path="/admin/users/edit/:id"
+  element={
+  <ProtectedRoute>
+  <EditUser />
+  </ProtectedRoute>
+  
+  }
+/>
+<Route
+  path="/admin/users/new"
+  element={
+  <ProtectedRoute>
+    <CreateUser />
+    </ProtectedRoute>
+}
+/>
 
     </Routes>
   );

@@ -10,7 +10,20 @@ export const getPublishedCategories = async () => {
   return data;
 };
 
-export const getBlogBySlug = async (slug) => {
-  const { data } = await api.get(`/posts/slug/${slug}`);
+export const getBlogBySlug = async (
+  slug,
+  language = "en"
+) => {
+  const { data } = await api.get(
+    `/posts/slug/${slug}?lang=${language}`
+  );
+
+  return data;
+};
+export const likeBlog = async (slug) => {
+  const { data } = await api.post(
+    `/posts/slug/${slug}/like`
+  );
+
   return data;
 };

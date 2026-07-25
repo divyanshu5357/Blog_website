@@ -9,6 +9,9 @@ import categoryRoutes from "./modules/categories/category.routes.js";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 import postsRoutes from "./modules/posts/posts.routes.js";
 import uploadRoutes from "./modules/uploads/upload.routes.js";
+import userRoutes from "./modules/users/user.routes.js";
+import commentRoutes from "./modules/comments/comment.routes.js";
+import searchRoutes from "./modules/search/search.routes.js";
 
 const app = express();
 
@@ -37,5 +40,8 @@ app.get("/", (req, res) => {
 });
 app.use(errorHandler);
 app.use("/api/uploads", uploadRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/comments", commentRoutes);
+app.use("/api/search", searchRoutes);
 
 export default app;

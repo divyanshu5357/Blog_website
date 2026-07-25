@@ -29,6 +29,26 @@ model User {
   @@index([username])
 }
 
+model PublicUser {
+  id            String   @id @default(cuid())
+
+  googleId      String   @unique
+
+  firstName     String
+  lastName      String?
+
+  email         String   @unique
+
+  avatar        String?
+
+  provider      String   @default("google")
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  comments      Comment[]
+}
+
 model Category {
   id          String     @id @default(cuid())
   name        String
@@ -79,6 +99,9 @@ model Post {
   seoTitle       String?
   seoDescription String?       @db.Text
   translations   PostTranslation[]
+  likes          Int            @default(0)
+  comments       Comment[]
+
 
   @@index([slug])
   @@index([status])
@@ -104,6 +127,21 @@ model PostTranslation {
   updatedAt DateTime @updatedAt
 
   @@unique([postId, language])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+
+  content   String
+
+  postId    String
+  post      Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  publicUserId String
+  publicUser   PublicUser @relation(fields: [publicUserId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PostTag {

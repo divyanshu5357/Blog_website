@@ -11,6 +11,7 @@ import {
   getPostBySlugService,
   getPublishedPostsService,
   getFeaturedPostsService,
+  likePostService,
 } from "./posts.service.js";
 
 
@@ -77,11 +78,11 @@ export const draftPost = asyncHandler(async (req, res) => {
 export const getPostBySlug = asyncHandler(async (req, res) => {
   const language = req.query.lang || "en";
 
-  const response = await getPostBySlugService(
+const response =
+await getPostBySlugService(
     req.params.slug,
-    language
-  );
-
+    req.query.lang || "en"
+);
   res.status(response.statusCode).json(response);
 });
 export const getPublishedPosts = asyncHandler(async (req, res) => {
@@ -91,6 +92,13 @@ export const getPublishedPosts = asyncHandler(async (req, res) => {
 });
 export const getFeaturedPosts = asyncHandler(async (req, res) => {
   const response = await getFeaturedPostsService();
+
+  res.status(response.statusCode).json(response);
+});
+export const likePost = asyncHandler(async (req, res) => {
+  const response = await likePostService(
+    req.params.slug
+  );
 
   res.status(response.statusCode).json(response);
 });

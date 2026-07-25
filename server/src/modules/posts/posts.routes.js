@@ -11,6 +11,7 @@ import {
   getPostBySlug,
   getPublishedPosts,
   getFeaturedPosts,
+  likePost,
 } from "./posts.controller.js";
 
 import {
@@ -23,6 +24,7 @@ router.get("/public/all", getPublishedPosts);
 
 router.get("/", protect, getPosts);
 router.get("/slug/:slug", getPostBySlug);
+router.post("/slug/:slug/like", likePost);
 router.get("/public/featured",getFeaturedPosts);
 
 router.get("/:id", protect, getPost);
@@ -64,5 +66,6 @@ router.patch(
   authorize("SUPER_ADMIN", "ADMIN", "EDITOR"),
   draftPost
 );
+
 
 export default router;

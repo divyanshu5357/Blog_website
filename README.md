@@ -263,3 +263,57 @@ This project is licensed under the MIT License.
 **Divyanshu Pratap Singh**
 
 GitHub: https://github.com/divyanshu5357
+
+✅ Users
+
+↓
+
+❤️ Like System
+
+↓
+
+💬 Google Login
+
+↓
+
+Comments
+
+↓
+
+Search
+
+↓
+
+Pagination
+
+↓
+
+Related Posts
+
+↓
+
+Views
+
+↓
+
+Tags
+
+↓
+
+Newsletter
+
+↓
+
+Media Library
+
+↓
+
+Settings
+
+↓
+
+SEO
+
+↓
+
+Launch 🚀
