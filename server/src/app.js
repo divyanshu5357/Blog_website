@@ -13,6 +13,9 @@ import userRoutes from "./modules/users/user.routes.js";
 import commentRoutes from "./modules/comments/comment.routes.js";
 import searchRoutes from "./modules/search/search.routes.js";
 
+import passport from "./modules/public-auth/passport.js";
+import publicAuthRoutes from "./modules/public-auth/public-auth.routes.js";
+
 const app = express();
 
 
@@ -27,6 +30,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
+app.use(passport.initialize());
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/dashboard", dashboardRoutes);
@@ -39,6 +43,7 @@ app.get("/", (req, res) => {
   });
 });
 app.use(errorHandler);
+app.use("/api/public-auth", publicAuthRoutes);
 app.use("/api/uploads", uploadRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);

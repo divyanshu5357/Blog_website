@@ -1,10 +1,12 @@
 import { Router } from "express";
+import { verifyPublicUser } from "../public-auth/public-auth.middleware.js";
 
 import {
   createComment,
   getPostComments,
   getComments,
   deleteComment,
+  updateComment,
 } from "./comment.controller.js";
 
 import {
@@ -14,21 +16,13 @@ import {
 
 const router = Router();
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-*/
 
-router.post("/", createComment);
+
+router.post("/",  verifyPublicUser,createComment);
 
 router.get("/post/:slug", getPostComments);
 
-/*
-|--------------------------------------------------------------------------
-| Admin Routes
-|--------------------------------------------------------------------------
-*/
+
 
 router.get(
   "/",
@@ -36,14 +30,16 @@ router.get(
   authorize("SUPER_ADMIN", "ADMIN"),
   getComments
 );
-
+router.patch(
+  "/:id",
+  verifyPublicUser,
+  updateComment
+);
 
 
 router.delete(
   "/:id",
-  protect,
-  authorize("SUPER_ADMIN", "ADMIN"),
+  verifyPublicUser,
   deleteComment
 );
-
 export default router;

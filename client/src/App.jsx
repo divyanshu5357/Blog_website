@@ -14,6 +14,7 @@ import MostRead from "./components/MostRead";
 import Resources from "./components/Resources";
 import Subscribe from "./components/Subscribe";
 import Community from "./components/Community";
+import GoogleSuccess from "./pages/GoogleSuccess";
 
 import Login from "./admin/Login";
 import Dashboard from "./admin/Dashboard";
@@ -33,7 +34,7 @@ import Comments from "./admin/Comments";
 function HomePage() {
   return (
     <>
-    <Toaster position="top-right" reverseOrder={false} />
+
       <Header />
 
       <main>
@@ -165,6 +166,10 @@ export default function App() {
     <CreateUser />
     </ProtectedRoute>
 }
+/>
+<Route
+  path="/google-success"
+  element={<GoogleSuccess />}
 />
 
     </Routes>

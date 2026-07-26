@@ -6,10 +6,14 @@ import App from "./App";
 import "./styles/styles.css";
 import "./i18n";
 
+import { PublicUserProvider } from "./context/PublicUserContext";
+
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <Toaster position="top-right" />
+    <PublicUserProvider>
+      <Toaster position="top-right" />
 
-    <App />
+      <App />
+    </PublicUserProvider>
   </BrowserRouter>
 );

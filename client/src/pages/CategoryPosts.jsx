@@ -64,7 +64,7 @@ export default function CategoryPosts() {
       "https://placehold.co/180x120?text=No+Image"
     }
     alt={post.title}
-    className="w-44 h-28 rounded-xl object-cover flex-shrink-0"
+    className="w-44 h-28 rounded-xl object-cover flex-0"
   />
 
   <div className="flex flex-col justify-between flex-1">

@@ -1,18 +1,33 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getBlogBySlug, likeBlog } from "../services/public.service";
-import { Heart, Eye } from "lucide-react";
-import {createComment,getComments,} from "../services/comment.service";
+import { Heart, Eye, Clock, User } from "lucide-react";
+import { createComment, getComments, updateComment, deleteComment, } from "../services/comment.service";
+import { usePublicUser } from "../context/PublicUserContext";
+import CommentBox from "../components/comments/CommentBox";
+import CommentList from "../components/comments/CommentList";
+import { motion, useScroll } from "framer-motion";
+
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
 
 export default function BlogDetails() {
   const { slug } = useParams();
-
   const [post, setPost] = useState(null);
   const [liked, setLiked] = useState(false);
   const [language, setLanguage] = useState("en");
   const [comments, setComments] = useState([]);
+  const [editingComment, setEditingComment] = useState(null);
+  const [editContent, setEditContent] = useState("");
+  const { publicUser } = usePublicUser();
+  const [replyingTo, setReplyingTo] = useState(null);
 
-const [commentForm, setCommentForm] = useState({name: "",email: "",content: "",});
+  const { scrollYProgress } = useScroll();
+
+  const [commentForm, setCommentForm] = useState({ content: "" });
 
   useEffect(() => {
     loadBlog();
@@ -36,15 +51,9 @@ const [commentForm, setCommentForm] = useState({name: "",email: "",content: "",}
 
   const handleLike = async () => {
     if (liked) return;
-
     try {
       const res = await likeBlog(slug);
-
-      setPost((prev) => ({
-        ...prev,
-        likes: res.data.likes,
-      }));
-
+      setPost((prev) => ({ ...prev, likes: res.data.likes }));
       setLiked(true);
       localStorage.setItem(`liked-${slug}`, "true");
     } catch (err) {
@@ -52,228 +61,233 @@ const [commentForm, setCommentForm] = useState({name: "",email: "",content: "",}
     }
   };
 
-  if (!post) {
-    return (
-      <div className="max-w-5xl mx-auto py-20 text-center">
-        Loading...
-      </div>
-    );
-  }
-const handleCommentChange = (e) => {
-  setCommentForm({
-    ...commentForm,
-    [e.target.name]: e.target.value,
-  });
+  const handleCommentChange = (e) => {
+    setCommentForm({ ...commentForm, [e.target.name]: e.target.value });
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!publicUser) {
+      window.location.href = "http://localhost:8000/api/public-auth/google";
+      return;
+    }
+    try {
+      await createComment({
+  postId: post.id,
+  content: commentForm.content,
+  parentId: replyingTo,
+});
+setReplyingTo(null);
+      setCommentForm({ content: "" });
+      loadBlog();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const handleEdit = (comment) => {
+    setEditingComment(comment.id);
+    setEditContent(comment.content);
+  };
+  const handleReply = (comment) => {
+  setReplyingTo(comment.id);
 };
-const handleCommentSubmit = async (e) => {
-  e.preventDefault();
-
+const handleUpdate = async () => {
   try {
-    await createComment({
-      ...commentForm,
-      postId: post.id,
-    });
-
-    alert(
-      "Comment submitted. It will appear after approval."
+    const res = await updateComment(
+      editingComment,
+      editContent
     );
 
-    setCommentForm({
-      name: "",
-      email: "",
-      content: "",
-    });
+    setComments((prev) =>
+      prev.map((comment) =>
+        comment.id === editingComment
+          ? res.data
+          : comment
+      )
+    );
+
+    setEditingComment(null);
+    setEditContent("");
+
   } catch (err) {
     console.log(err);
   }
 };
-  return (
-    <div className="max-w-5xl mx-auto py-12 px-5">
-      {post.coverImage && (
-        <img
-          src={post.coverImage}
-          alt={post.title}
-          className="w-full h-105 object-cover rounded-2xl mb-10"
-        />
-      )}
+   const handleDelete = async (id) => {
+  if (!window.confirm("Delete this comment?")) {
+    return;
+  }
 
-      <p className="text-violet-600 font-semibold">
-        {post.category?.name}
-      </p>
+  try {
+    await deleteComment(id);
 
-      <div className="mb-6">
-        <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className="border rounded-lg px-3 py-2 mt-4"
-        >
-          <option value="en">English</option>
-          <option value="hi">हिन्दी (Hindi)</option>
-          <option value="mr">मराठी (Marathi)</option>
-          <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
-          <option value="gu">ગુજરાતી (Gujarati)</option>
-          <option value="ta">தமிழ் (Tamil)</option>
-          <option value="te">తెలుగు (Telugu)</option>
-          <option value="kn">ಕನ್ನಡ (Kannada)</option>
-          <option value="ml">മലയാളം (Malayalam)</option>
-          <option value="bn">বাংলা (Bengali)</option>
-        </select>
-      </div>
+    setComments((prev) =>
+      prev.filter(
+        (comment) => comment.id !== id
+      )
+    );
 
-      <h1 className="text-5xl font-bold mt-3">
-        {post.title}
-      </h1>
+  } catch (err) {
+    console.log(err);
+  }
+};
+const handleCancelEdit = () => {
+  setEditingComment(null);
+  setEditContent("");
+};
 
-      {/* Corrected Metadata Section */}
-      <div className="mt-4 flex items-center gap-6 text-gray-500">
-        <span>
-          {post.author.firstName} {post.author.lastName}
-        </span>
-
-        <span>
-          {post.readingTime} min read
-        </span>
-
-        <div className="flex items-center gap-2">
-          <Eye size={18} />
-          <span>{post.views}</span>
+  if (!post) {
+    return (
+      <div className="max-w-5xl mx-auto py-12 px-5 animate-pulse">
+        <div className="w-full h-100 bg-gray-200 rounded-2xl mb-10"></div>
+        <div className="h-4 bg-gray-200 rounded w-24 mb-6"></div>
+        <div className="h-12 bg-gray-200 rounded w-3/4 mb-4"></div>
+        <div className="h-6 bg-gray-200 rounded w-1/2 mb-10"></div>
+        <div className="space-y-4">
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
         </div>
-
-        <button
-          onClick={handleLike}
-          disabled={liked}
-          className={`flex items-center gap-2 transition-colors ${
-            liked ? "text-red-500" : "hover:text-red-500"
-          }`}
-        >
-          <Heart size={18} fill={liked ? "currentColor" : "none"} />
-          <span>{post.likes}</span>
-        </button>
       </div>
+    );
+  }
 
-      <p className="mt-8 text-xl text-gray-600">
-        {post.excerpt}
-      </p>
-
-      <article
-        className="prose prose-lg max-w-none mt-10"
-        dangerouslySetInnerHTML={{
-          __html: post.content,
-        }}
+  return (
+    <>
+      {/* Top Reading Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1.5 bg-violet-600 z-50 origin-left"
+        style={{ scaleX: scrollYProgress }}
       />
-      <div className="mt-16 border-t pt-10">
 
-  <h2 className="text-3xl font-bold mb-8">
-    Comments ({comments.length})
-  </h2>
+      <motion.div
+        className="max-w-5xl mx-auto py-12 px-5"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          visible: { transition: { staggerChildren: 0.15 } }
+        }}
+      >
+        {/* Cover Image */}
+        {post.coverImage && (
+          <motion.img
+            variants={fadeUpVariant}
+            src={post.coverImage}
+            alt={post.title}
+            className="w-full h-112.5 object-cover rounded-3xl mb-10 shadow-lg"
+          />
+        )}
 
-  {/* Comment Form */}
+        {/* Category & Language Selector row */}
+        <motion.div variants={fadeUpVariant} className="flex justify-between items-center mb-6">
+          <span className="bg-violet-100 text-violet-700 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide">
+            {post.category?.name || "Article"}
+          </span>
 
-  <form
-    onSubmit={handleCommentSubmit}
-    className="space-y-4 bg-gray-50 rounded-xl p-6"
-  >
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500 focus:outline-none transition-all cursor-pointer hover:bg-gray-100"
+          >
+            <option value="en">English</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+            <option value="gu">ગુજરાતી (Gujarati)</option>
 
-    <input
-      type="text"
-      name="name"
-      placeholder="Your Name"
-      value={commentForm.name}
-      onChange={handleCommentChange}
-      className="w-full border rounded-lg p-3"
-      required
-    />
+            <option value="ta">தமிழ் (Tamil)</option>
+          </select>
+        </motion.div>
 
-    <input
-      type="email"
-      name="email"
-      placeholder="Email (Optional)"
-      value={commentForm.email}
-      onChange={handleCommentChange}
-      className="w-full border rounded-lg p-3"
-    />
+        {/* Title */}
+        <motion.h1 variants={fadeUpVariant} className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
+          {post.title}
+        </motion.h1>
 
-    <textarea
-      name="content"
-      rows={5}
-      placeholder="Write your comment..."
-      value={commentForm.content}
-      onChange={handleCommentChange}
-      className="w-full border rounded-lg p-3"
-      required
-    />
-
-    <button
-      type="submit"
-      className="bg-violet-700 text-white px-6 py-3 rounded-lg hover:bg-violet-800"
-    >
-      Submit Comment
-    </button>
-
-  </form>
-
-  {/* Approved Comments */}
-
-  <div className="mt-10 space-y-6">
-
-    {comments.length === 0 ? (
-
-      <p className="text-gray-500">
-        No comments yet.
-      </p>
-
-    ) : (
-
-      comments.map((comment) => (
-
-        <div
-          key={comment.id}
-          className="border rounded-xl p-5"
-        >
-
-          <div className="flex items-center gap-3">
-
-            <div className="w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-bold">
-
-              {comment.name.charAt(0).toUpperCase()}
-
-            </div>
-
-            <div>
-
-              <h4 className="font-semibold">
-
-                {comment.name}
-
-              </h4>
-
-              <p className="text-sm text-gray-500">
-
-                {new Date(
-                  comment.createdAt
-                ).toLocaleDateString()}
-
-              </p>
-
-            </div>
-
+        {/* Metadata Bar */}
+        <motion.div variants={fadeUpVariant} className="mt-8 flex flex-wrap items-center gap-6 text-gray-500 border-y border-gray-100 py-4">
+          <div className="flex items-center gap-2 font-medium text-gray-700">
+            <User size={18} className="text-violet-500" />
+            <span>{post.author.firstName} {post.author.lastName}</span>
           </div>
 
-          <p className="mt-4 text-gray-700">
+          <div className="flex items-center gap-2">
+            <Clock size={18} />
+            <span>{post.readingTime} min read</span>
+          </div>
 
-            {comment.content}
+          <div className="flex items-center gap-2">
+            <Eye size={18} />
+            <span>{post.views}</span>
+          </div>
 
-          </p>
+          {/* Interactive Like Button */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleLike}
+            disabled={liked}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-all ${liked ? "bg-red-50 text-red-500 cursor-default" : "hover:bg-gray-100 text-gray-500"
+              }`}
+          >
+            <motion.div
+              animate={liked ? { scale: [1, 1.3, 1] } : {}}
+              transition={{ duration: 0.3 }}
+            >
+              <Heart size={18} fill={liked ? "currentColor" : "none"} className={liked ? "text-red-500" : ""} />
+            </motion.div>
+            <span className="font-medium">{post.likes}</span>
+          </motion.button>
+        </motion.div>
 
-        </div>
+        {/* Excerpt */}
+        <motion.p variants={fadeUpVariant} className="mt-8 text-xl text-gray-600 font-serif italic border-l-4 border-violet-500 pl-6">
+          {post.excerpt}
+        </motion.p>
 
-      ))
+        {/* Article Content */}
+        <motion.article
+          variants={fadeUpVariant}
+          className="prose prose-lg md:prose-xl prose-violet max-w-none mt-12 mb-20 text-gray-800 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
 
-    )}
+        {/* Comments Section */}
+        <motion.div variants={fadeUpVariant} className="mt-16 bg-gray-50 p-8 rounded-3xl border border-gray-100">
+          <h2 className="text-3xl font-bold mb-8 text-gray-900">
+            Discussion ({comments.length})
+          </h2>
 
-  </div>
+          <CommentBox
+            publicUser={publicUser}
+            commentForm={commentForm}
+            handleCommentChange={handleCommentChange}
+            handleCommentSubmit={handleCommentSubmit}
+          />
 
-</div>
-    </div>
+          <div className="mt-10">
+           <CommentList
+  comments={comments}
+  publicUser={publicUser}
+
+  editingComment={editingComment}
+  editContent={editContent}
+  setEditContent={setEditContent}
+
+  replyingTo={replyingTo}
+  commentForm={commentForm}
+  handleCommentChange={handleCommentChange}
+  handleCommentSubmit={handleCommentSubmit}
+
+  onUpdate={handleUpdate}
+  onCancel={handleCancelEdit}
+  onEdit={handleEdit}
+  onDelete={handleDelete}
+  onReply={handleReply}
+/>
+          </div>
+        </motion.div>
+      </motion.div>
+    </>
   );
 }

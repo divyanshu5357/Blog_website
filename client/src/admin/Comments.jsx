@@ -91,54 +91,55 @@ export default function Comments() {
             </thead>
 
             <tbody>
+  {comments.map((comment) => (
+    <tr
+      key={comment.id}
+      className="border-b"
+    >
+      <td className="py-4">
+        <div className="flex items-center gap-3">
+          <img
+            src={comment.publicUser.avatar}
+            alt=""
+            className="w-10 h-10 rounded-full"
+          />
 
-              {comments.map((comment) => (
+          <div>
+            <p className="font-semibold">
+              {comment.publicUser.firstName}{" "}
+              {comment.publicUser.lastName}
+            </p>
+          </div>
+        </div>
+      </td>
 
-                <tr
-                  key={comment.id}
-                  className="border-b"
-                >
+      <td>
+        {comment.publicUser.email}
+      </td>
 
-                  <td className="py-4">
-                    {comment.name}
-                  </td>
+      <td>
+        {comment.post.title}
+      </td>
 
-                  <td>
-                    {comment.email || "-"}
-                  </td>
+      <td className="max-w-sm">
+        {comment.content}
+      </td>
 
-                  <td>
-                    {comment.post.title}
-                  </td>
+      <td>
+        {new Date(comment.createdAt).toLocaleDateString()}
+      </td>
 
-                  <td className="max-w-sm">
-                    {comment.content}
-                  </td>
-
-                  <td>
-                    {new Date(
-                      comment.createdAt
-                    ).toLocaleDateString()}
-                  </td>
-
-                  <td>
-
-                    <Button
-                      variant="danger"
-                      onClick={() =>
-                        handleDelete(comment.id)
-                      }
-                    >
-                      Delete
-                    </Button>
-
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
+      <td>
+        <Button
+          variant="danger"
+          onClick={() => handleDelete(comment.id)}
+        >
+          Delete
+        </Button>
+      </td>
+    </tr>
+  ))}
+</tbody>
 
           </table>
 

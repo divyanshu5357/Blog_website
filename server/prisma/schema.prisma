@@ -25,6 +25,7 @@ model User {
   refreshToken  String?
   posts         Post[]
 
+
   @@index([email])
   @@index([username])
 }
@@ -41,12 +42,15 @@ model PublicUser {
 
   avatar        String?
 
-  provider      String   @default("google")
+  provider      AuthProvider @default(GOOGLE)
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   comments      Comment[]
+}
+enum AuthProvider {
+  GOOGLE
 }
 
 model Category {
@@ -130,19 +134,25 @@ model PostTranslation {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
+  id           String   @id @default(cuid())
 
-  content   String
+  content      String
 
-  postId    String
-  post      Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId       String
+  post         Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   publicUserId String
   publicUser   PublicUser @relation(fields: [publicUserId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  parentId     String?
+  parent       Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+
+  replies      Comment[] @relation("CommentReplies")
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
+
 
 model PostTag {
   postId String
