@@ -511,3 +511,49 @@ export const likePostService = async (slug) => {
     updated
   );
 };
+export const getRelatedPostsService = async (slug) => {
+  const currentPost = await prisma.post.findUnique({
+    where: { slug },
+  });
+
+  if (!currentPost) {
+    throw new ApiError(404, "Post not found.");
+  }
+
+  const posts = await prisma.post.findMany({
+    where: {
+      status: "PUBLISHED",
+      categoryId: currentPost.categoryId,
+      NOT: {
+        slug,
+      },
+    },
+
+    take: 3,
+
+    include: {
+      author: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+
+      category: {
+        select: {
+          name: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return new ApiResponse(
+    200,
+    "Related posts fetched successfully.",
+    posts
+  );
+};

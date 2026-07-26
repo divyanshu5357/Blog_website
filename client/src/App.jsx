@@ -30,6 +30,7 @@ import CreateCategory from "./admin/CreateCategory";
 import EditCategory from "./admin/EditCategory";
 import CreateUser from "./admin/CreateUser";
 import Comments from "./admin/Comments";
+import useLenis from "./hooks/useLenis";
 
 function HomePage() {
   return (
@@ -55,6 +56,7 @@ function HomePage() {
 }
 
 export default function App() {
+   useLenis();
   return (
     <Routes>
       

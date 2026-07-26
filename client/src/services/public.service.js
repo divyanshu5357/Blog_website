@@ -27,3 +27,11 @@ export const likeBlog = async (slug) => {
 
   return data;
 };
+
+export const getRelatedPosts = async (slug) => {
+  const { data } = await api.get(
+    `/posts/related/${slug}`
+  );
+
+  return data;
+};

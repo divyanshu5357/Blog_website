@@ -12,8 +12,8 @@ import {
   getPublishedPosts,
   getFeaturedPosts,
   likePost,
+  getRelatedPosts,
 } from "./posts.controller.js";
-
 import {
   protect,
   authorize,
@@ -23,6 +23,8 @@ const router = Router();
 router.get("/public/all", getPublishedPosts);
 
 router.get("/", protect, getPosts);
+router.get("/related/:slug",getRelatedPosts);
+
 router.get("/slug/:slug", getPostBySlug);
 router.post("/slug/:slug/like", likePost);
 router.get("/public/featured",getFeaturedPosts);

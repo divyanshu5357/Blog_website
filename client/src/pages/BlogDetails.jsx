@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getBlogBySlug, likeBlog } from "../services/public.service";
-import { Heart, Eye, Clock, User } from "lucide-react";
-import { createComment, getComments, updateComment, deleteComment, } from "../services/comment.service";
+import { Link, useParams } from "react-router-dom";
+import { getBlogBySlug, likeBlog, getRelatedPosts } from "../services/public.service";
+import RelatedPosts from "../components/blog/RelatedPosts";
+import { Heart, Eye, Clock, User, ArrowLeft } from "lucide-react";
+import DeleteModal from "../components/DeleteModal";
+import ShareButtons from "../components/blog/ShareButtons";
+
+import { 
+  createComment, 
+  getComments, 
+  updateComment, 
+  deleteComment 
+} from "../services/comment.service";
 import { usePublicUser } from "../context/PublicUserContext";
 import CommentBox from "../components/comments/CommentBox";
 import CommentList from "../components/comments/CommentList";
 import { motion, useScroll } from "framer-motion";
 
-
 const fadeUpVariant = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  hidden: { opacity: 0, y: 15 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
 };
 
 export default function BlogDetails() {
@@ -20,13 +28,14 @@ export default function BlogDetails() {
   const [liked, setLiked] = useState(false);
   const [language, setLanguage] = useState("en");
   const [comments, setComments] = useState([]);
+  const [relatedPosts, setRelatedPosts] = useState([]);
   const [editingComment, setEditingComment] = useState(null);
   const [editContent, setEditContent] = useState("");
   const { publicUser } = usePublicUser();
   const [replyingTo, setReplyingTo] = useState(null);
+  const [commentToDelete, setCommentToDelete] = useState(null);
 
   const { scrollYProgress } = useScroll();
-
   const [commentForm, setCommentForm] = useState({ content: "" });
 
   useEffect(() => {
@@ -44,6 +53,8 @@ export default function BlogDetails() {
       setPost(res.data);
       const commentRes = await getComments(slug);
       setComments(commentRes.data);
+      const relatedRes = await getRelatedPosts(slug);
+      setRelatedPosts(relatedRes.data);
     } catch (err) {
       console.log(err);
     }
@@ -73,221 +84,251 @@ export default function BlogDetails() {
     }
     try {
       await createComment({
-  postId: post.id,
-  content: commentForm.content,
-  parentId: replyingTo,
-});
-setReplyingTo(null);
+        postId: post.id,
+        content: commentForm.content,
+        parentId: replyingTo,
+      });
+      setReplyingTo(null);
       setCommentForm({ content: "" });
       loadBlog();
     } catch (err) {
       console.log(err);
     }
   };
+
   const handleEdit = (comment) => {
     setEditingComment(comment.id);
     setEditContent(comment.content);
   };
+
   const handleReply = (comment) => {
-  setReplyingTo(comment.id);
-};
-const handleUpdate = async () => {
-  try {
-    const res = await updateComment(
-      editingComment,
-      editContent
-    );
+    setReplyingTo(comment.id);
+  };
+  
+  const handleCancelReply = () => {
+    setReplyingTo(null);
+    setCommentForm({ content: "" }); 
+  };
 
-    setComments((prev) =>
-      prev.map((comment) =>
-        comment.id === editingComment
-          ? res.data
-          : comment
-      )
-    );
+  const handleUpdate = async () => {
+    try {
+      const res = await updateComment(editingComment, editContent);
+      setComments((prev) =>
+        prev.map((comment) => (comment.id === editingComment ? res.data : comment))
+      );
+      setEditingComment(null);
+      setEditContent("");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+  const requestDelete = (id) => {
+    setCommentToDelete(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!commentToDelete) return;
+    
+    try {
+      await deleteComment(commentToDelete);
+      setComments((prev) => prev.filter((comment) => comment.id !== commentToDelete));
+      setCommentToDelete(null); 
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleCancelEdit = () => {
     setEditingComment(null);
     setEditContent("");
-
-  } catch (err) {
-    console.log(err);
-  }
-};
-   const handleDelete = async (id) => {
-  if (!window.confirm("Delete this comment?")) {
-    return;
-  }
-
-  try {
-    await deleteComment(id);
-
-    setComments((prev) =>
-      prev.filter(
-        (comment) => comment.id !== id
-      )
-    );
-
-  } catch (err) {
-    console.log(err);
-  }
-};
-const handleCancelEdit = () => {
-  setEditingComment(null);
-  setEditContent("");
-};
-
-  if (!post) {
-    return (
-      <div className="max-w-5xl mx-auto py-12 px-5 animate-pulse">
-        <div className="w-full h-100 bg-gray-200 rounded-2xl mb-10"></div>
-        <div className="h-4 bg-gray-200 rounded w-24 mb-6"></div>
-        <div className="h-12 bg-gray-200 rounded w-3/4 mb-4"></div>
-        <div className="h-6 bg-gray-200 rounded w-1/2 mb-10"></div>
-        <div className="space-y-4">
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-        </div>
-      </div>
-    );
-  }
+  };
 
   return (
     <>
-      {/* Top Reading Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1.5 bg-violet-600 z-50 origin-left"
+        className="fixed top-0 left-0 right-0 h-1 bg-violet-600 z-50 origin-left"
         style={{ scaleX: scrollYProgress }}
       />
 
-      <motion.div
-        className="max-w-5xl mx-auto py-12 px-5"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          visible: { transition: { staggerChildren: 0.15 } }
-        }}
-      >
-        {/* Cover Image */}
-        {post.coverImage && (
-          <motion.img
-            variants={fadeUpVariant}
-            src={post.coverImage}
-            alt={post.title}
-            className="w-full h-112.5 object-cover rounded-3xl mb-10 shadow-lg"
-          />
+      <div className="max-w-4xl mx-auto py-10 md:py-16 px-5">
+        
+        {post ? (
+          <motion.div 
+            initial={{ opacity: 0, x: -15 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            className="flex items-center gap-1.5 mb-8 text-sm font-semibold text-gray-500"
+          >
+            <Link
+              to="/"
+              className="flex items-center gap-1.5 px-3 py-1.5 -ml-3 rounded-xl hover:text-violet-700 hover:bg-violet-50 transition-all duration-200"
+            >
+              <ArrowLeft size={16} />
+              Home
+            </Link>
+
+            {post.category && (
+              <>
+                <span className="text-gray-300">/</span>
+                <Link
+                  to={`/category/${post.category.slug}`}
+                  className="px-3 py-1.5 rounded-xl hover:text-violet-700 hover:bg-violet-50 transition-all duration-200"
+                >
+                  {post.category.name}
+                </Link>
+              </>
+            )}
+          </motion.div>
+        ) : (
+          <div className="flex items-center gap-3 mb-8 animate-pulse">
+            <div className="h-6 bg-gray-200 rounded-lg w-20"></div>
+            <div className="text-gray-200">/</div>
+            <div className="h-6 bg-gray-200 rounded-lg w-24"></div>
+          </div>
         )}
 
-        {/* Category & Language Selector row */}
-        <motion.div variants={fadeUpVariant} className="flex justify-between items-center mb-6">
-          <span className="bg-violet-100 text-violet-700 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide">
-            {post.category?.name || "Article"}
-          </span>
-
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500 focus:outline-none transition-all cursor-pointer hover:bg-gray-100"
-          >
-            <option value="en">English</option>
-            <option value="hi">हिन्दी (Hindi)</option>
-            <option value="mr">मराठी (Marathi)</option>
-            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
-            <option value="gu">ગુજરાતી (Gujarati)</option>
-
-            <option value="ta">தமிழ் (Tamil)</option>
-          </select>
-        </motion.div>
-
-        {/* Title */}
-        <motion.h1 variants={fadeUpVariant} className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
-          {post.title}
-        </motion.h1>
-
-        {/* Metadata Bar */}
-        <motion.div variants={fadeUpVariant} className="mt-8 flex flex-wrap items-center gap-6 text-gray-500 border-y border-gray-100 py-4">
-          <div className="flex items-center gap-2 font-medium text-gray-700">
-            <User size={18} className="text-violet-500" />
-            <span>{post.author.firstName} {post.author.lastName}</span>
+        {/* Isolated Blog Content Loader */}
+        {!post ? (
+          <div className="animate-pulse mb-16">
+            <div className="w-full h-64 md:h-96 bg-gray-200 rounded-3xl mb-8"></div>
+            <div className="h-6 bg-gray-200 rounded w-32 mb-6"></div>
+            <div className="h-10 bg-gray-200 rounded w-full md:w-3/4 mb-6"></div>
+            <div className="space-y-4 mt-8">
+              <div className="h-4 bg-gray-200 rounded w-full"></div>
+              <div className="h-4 bg-gray-200 rounded w-full"></div>
+              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+            </div>
           </div>
+        ) : (
+          <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
+            {post.coverImage && (
+              <motion.img
+                variants={fadeUpVariant}
+                src={post.coverImage}
+                alt={post.title}
+                className="w-full h-64 md:h-[450px] object-cover rounded-3xl mb-8 shadow-sm"
+              />
+            )}
 
-          <div className="flex items-center gap-2">
-            <Clock size={18} />
-            <span>{post.readingTime} min read</span>
-          </div>
+            <motion.div variants={fadeUpVariant} className="flex justify-between items-center mb-6">
+              <span className="bg-violet-50 text-violet-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                {post.category?.name || "Article"}
+              </span>
 
-          <div className="flex items-center gap-2">
-            <Eye size={18} />
-            <span>{post.views}</span>
-          </div>
-
-          {/* Interactive Like Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={handleLike}
-            disabled={liked}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-all ${liked ? "bg-red-50 text-red-500 cursor-default" : "hover:bg-gray-100 text-gray-500"
-              }`}
-          >
-            <motion.div
-              animate={liked ? { scale: [1, 1.3, 1] } : {}}
-              transition={{ duration: 0.3 }}
-            >
-              <Heart size={18} fill={liked ? "currentColor" : "none"} className={liked ? "text-red-500" : ""} />
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="bg-white border border-gray-200 text-sm text-gray-700 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-violet-500 outline-none cursor-pointer hover:bg-gray-50"
+              >
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="mr">मराठी (Marathi)</option>
+                <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                <option value="gu">ગુજરાતી (Gujarati)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+              </select>
             </motion.div>
-            <span className="font-medium">{post.likes}</span>
-          </motion.button>
-        </motion.div>
 
-        {/* Excerpt */}
-        <motion.p variants={fadeUpVariant} className="mt-8 text-xl text-gray-600 font-serif italic border-l-4 border-violet-500 pl-6">
-          {post.excerpt}
-        </motion.p>
+            <motion.h1 variants={fadeUpVariant} className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+              {post.title}
+            </motion.h1>
 
-        {/* Article Content */}
-        <motion.article
-          variants={fadeUpVariant}
-          className="prose prose-lg md:prose-xl prose-violet max-w-none mt-12 mb-20 text-gray-800 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+            <motion.div variants={fadeUpVariant} className="mt-6 flex flex-wrap items-center gap-5 text-sm text-gray-500 border-y border-gray-100 py-4">
+              <div className="flex items-center gap-1.5 font-medium text-gray-700">
+                <User size={16} className="text-violet-500" />
+                <span>{post.author.firstName} {post.author.lastName}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Clock size={16} />
+                <span>{post.readingTime} min read</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Eye size={16} />
+                <span>{post.views}</span>
+              </div>
 
-        {/* Comments Section */}
-        <motion.div variants={fadeUpVariant} className="mt-16 bg-gray-50 p-8 rounded-3xl border border-gray-100">
-          <h2 className="text-3xl font-bold mb-8 text-gray-900">
-            Discussion ({comments.length})
-          </h2>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleLike}
+                disabled={liked}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-colors ml-auto md:ml-0 ${
+                  liked ? "bg-red-50 text-red-500 cursor-default" : "hover:bg-gray-50 text-gray-500"
+                }`}
+              >
+                <motion.div animate={liked ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
+                  <Heart size={16} fill={liked ? "currentColor" : "none"} className={liked ? "text-red-500" : ""} />
+                </motion.div>
+                <span className="font-semibold">{post.likes}</span>
+              </motion.button>
+            </motion.div>
+
+            <motion.p variants={fadeUpVariant} className="mt-8 text-lg text-gray-600 font-serif italic border-l-4 border-violet-400 pl-5">
+              {post.excerpt}
+            </motion.p>
+
+            <motion.article
+              variants={fadeUpVariant}
+              className="prose prose-lg prose-violet max-w-none mt-10 mb-16 text-gray-800"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+            <ShareButtons title={post.title} />
+          </motion.div>
+        )}
+
+        {/* RELATED POSTS SECTION */}
+        {relatedPosts && relatedPosts.length > 0 && (
+          <div className="mt-16 border-t border-gray-200 pt-12">
+            <RelatedPosts posts={relatedPosts} />
+          </div>
+        )}
+
+        {/* Comment section stays interactive, avoiding full-page loading locks */}
+        <div className="mt-12 border-t border-gray-200 pt-10">
+          <div className="flex items-center gap-2 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900">Discussion</h2>
+            <span className="bg-gray-100 text-gray-600 text-sm font-semibold px-2.5 py-0.5 rounded-full">
+              {comments.length}
+            </span>
+          </div>
 
           <CommentBox
             publicUser={publicUser}
             commentForm={commentForm}
             handleCommentChange={handleCommentChange}
             handleCommentSubmit={handleCommentSubmit}
+            setCommentForm={setCommentForm}
           />
 
-          <div className="mt-10">
-           <CommentList
-  comments={comments}
-  publicUser={publicUser}
-
-  editingComment={editingComment}
-  editContent={editContent}
-  setEditContent={setEditContent}
-
-  replyingTo={replyingTo}
-  commentForm={commentForm}
-  handleCommentChange={handleCommentChange}
-  handleCommentSubmit={handleCommentSubmit}
-
-  onUpdate={handleUpdate}
-  onCancel={handleCancelEdit}
-  onEdit={handleEdit}
-  onDelete={handleDelete}
-  onReply={handleReply}
-/>
+          <div className="mt-8">
+            <CommentList
+              comments={comments}
+              publicUser={publicUser}
+              editingComment={editingComment}
+              editContent={editContent}
+              setEditContent={setEditContent}
+              replyingTo={replyingTo}
+              commentForm={commentForm}
+              handleCommentChange={handleCommentChange}
+              handleCommentSubmit={handleCommentSubmit}
+              onUpdate={handleUpdate}
+              onCancel={handleCancelEdit}
+              onEdit={handleEdit}
+              onDelete={requestDelete} 
+              onReply={handleReply}
+              onCancelReply={handleCancelReply}
+            />
+            
+            <DeleteModal 
+              isOpen={commentToDelete !== null} 
+              onClose={() => setCommentToDelete(null)} 
+              onConfirm={confirmDelete} 
+            />
           </div>
-        </motion.div>
-      </motion.div>
+          
+        </div>
+
+      </div>
     </>
   );
 }
