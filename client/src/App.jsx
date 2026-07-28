@@ -31,6 +31,7 @@ import EditCategory from "./admin/EditCategory";
 import CreateUser from "./admin/CreateUser";
 import Comments from "./admin/Comments";
 import useLenis from "./hooks/useLenis";
+import LiveSessionsAdmin from "./admin/LiveSessionsAdmin";
 
 function HomePage() {
   return (
@@ -81,6 +82,14 @@ export default function App() {
       </ProtectedRoute>
     }
   />
+  <Route
+  path="/admin/live-sessions"
+  element={
+    <ProtectedRoute>
+      <LiveSessionsAdmin />
+    </ProtectedRoute>
+  }
+/>
 
   <Route
     path="/admin/categories"
@@ -173,6 +182,7 @@ export default function App() {
   path="/google-success"
   element={<GoogleSuccess />}
 />
+
 
     </Routes>
   );

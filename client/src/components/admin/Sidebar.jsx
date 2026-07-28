@@ -8,6 +8,7 @@ import {
   Image,
   Settings,
   LogOut,
+  CalendarDays,
 } from "lucide-react";
 
 const menu = [
@@ -46,6 +47,11 @@ const menu = [
     icon: Settings,
     path: "/admin/settings",
   },
+  {
+  title: "Live Sessions",
+  icon: CalendarDays,
+  path: "/admin/live-sessions",
+},
 ];
 
 export default function Sidebar() {
