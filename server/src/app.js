@@ -13,7 +13,7 @@ import userRoutes from "./modules/users/user.routes.js";
 import commentRoutes from "./modules/comments/comment.routes.js";
 import searchRoutes from "./modules/search/search.routes.js";
 import liveSessionRoutes from "./modules/live-session/liveSession.routes.js";
-
+import { startReminderCron } from "./cron/reminderCron.js";
 
 import passport from "./modules/public-auth/passport.js";
 import publicAuthRoutes from "./modules/public-auth/public-auth.routes.js";
@@ -51,6 +51,6 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/search", searchRoutes);
 app.use(  "/api/live-sessions",  liveSessionRoutes);
 app.use(errorHandler);
-
+startReminderCron();
 
 export default app;

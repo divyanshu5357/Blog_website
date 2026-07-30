@@ -6,6 +6,9 @@ import {
   getPublicSessions,
   registerSession,
   getSessionRegistrations,
+  updateLiveSession,
+  deleteLiveSession,
+  exportRegistrations,
 } from "./liveSession.controller.js";
 import {
   protect,
@@ -45,5 +48,31 @@ router.get(
   ),
   getSessionRegistrations
 );
+router.put(
+  "/:id",
+  protect,
+  authorize(
+    "SUPER_ADMIN",
+    "ADMIN",
+    "EDITOR"
+  ),
+  updateLiveSession
+);
+router.delete(
+  "/:id",
+  protect,
+  authorize(
+    "SUPER_ADMIN",
+    "ADMIN",
+    "EDITOR"
+  ),
+  deleteLiveSession
+);
 
+router.get(
+  "/:id/export",
+  protect,
+  authorize("SUPER_ADMIN", "ADMIN", "EDITOR"),
+  exportRegistrations
+);
 export default router;

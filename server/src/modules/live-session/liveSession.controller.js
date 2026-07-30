@@ -3,6 +3,9 @@ import {
   getLiveSessionsService,
   registerSessionService,
   getSessionRegistrationsService,
+  updateLiveSessionService,
+  deleteLiveSessionService,
+  exportRegistrationsService,
 } from "./liveSession.service.js";
 import { sendEmail } from "../../services/mail.service.js";
 import prisma from "../../config/db.js";;
@@ -136,5 +139,83 @@ export const getSessionRegistrations = async (
 
   } catch (err) {
     next(err);
+  }
+};
+export const updateLiveSession = async (
+  req,
+  res,
+  next
+) => {
+
+  try {
+
+    const response =
+      await updateLiveSessionService(
+        req.params.id,
+        req.body
+      );
+
+    res
+      .status(response.statusCode)
+      .json(response);
+
+  } catch (err) {
+
+    next(err);
+
+  }
+
+};
+export const deleteLiveSession = async (
+  req,
+  res,
+  next
+) => {
+
+  try {
+
+    const response =
+      await deleteLiveSessionService(
+        req.params.id
+      );
+
+    res
+      .status(response.statusCode)
+      .json(response);
+
+  } catch (err) {
+
+    next(err);
+
+  }
+
+};
+export const exportRegistrations = async (
+  req,
+  res,
+  next
+) => {
+  try {
+
+    const csv = await exportRegistrationsService(
+      req.params.id
+    );
+
+    res.setHeader(
+      "Content-Type",
+      "text/csv"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="registrations.csv"'
+    );
+
+    res.status(200).send(csv);
+
+  } catch (err) {
+
+    next(err);
+
   }
 };

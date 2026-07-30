@@ -9,6 +9,7 @@ function LiveSessions() {
   const [loading, setLoading] = useState(true);
   const [selectedSession, setSelectedSession] = useState(null);
 const [modalOpen, setModalOpen] = useState(false);
+const [registered, setRegistered] = useState(false);
 
   useEffect(() => {
     loadSessions();

@@ -1,19 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export default function CreateLiveSession({ onClose, onSuccess }) {
+export default function CreateLiveSession({
+  onClose,
+  onSuccess,
+  session,
+}) {
   const [form, setForm] = useState({
-    title: "",
-    speaker: "",
-    description: "",
-    date: "",
-    duration: "",
-    maxSeats: "",
-    meetingLink: "",
-    image: "",
-  });
+  title: session?.title || "",
+  speaker: session?.speaker || "",
+  description: session?.description || "",
+  date: session?.date
+    ? new Date(session.date).toISOString().slice(0, 16)
+    : "",
+  duration: session?.duration || "",
+  maxSeats: session?.maxSeats || "",
+  meetingLink: session?.meetingLink || "",
+  image: session?.image || "",
+});
 
+useEffect(() => {
+  if (session) {
+    setForm({
+      title: session.title || "",
+      speaker: session.speaker || "",
+      description: session.description || "",
+      date: session.date
+        ? new Date(session.date).toISOString().slice(0, 16)
+        : "",
+      duration: session.duration || "",
+      maxSeats: session.maxSeats || "",
+      meetingLink: session.meetingLink || "",
+      image: session.image || "",
+    });
+  }
+}, [session]);
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -25,30 +47,56 @@ export default function CreateLiveSession({ onClose, onSuccess }) {
     e.preventDefault();
 
     try {
-      await axios.post(
-        "http://localhost:8000/api/live-sessions",
-        {
-          ...form,
-          duration: Number(form.duration),
-          maxSeats: Number(form.maxSeats),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+    if (session) {
 
-      toast.success("Session created");
+  await axios.put(
+    `http://localhost:8000/api/live-sessions/${session.id}`,
+    {
+      ...form,
+      date: new Date(form.date).toISOString(),
+      duration: Number(form.duration),
+      maxSeats: Number(form.maxSeats),
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    }
+  );
+
+  toast.success("Session Updated");
+
+} else {
+
+  await axios.post(
+    "http://localhost:8000/api/live-sessions",
+    {
+      ...form,
+      date: new Date(form.date).toISOString(),
+      duration: Number(form.duration),
+      maxSeats: Number(form.maxSeats),
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    }
+  );
+
+  toast.success("Session Created");
+
+}
 
       onSuccess();
 
       onClose();
 
     } catch (err) {
-      toast.error("Failed to create session");
-      console.log(err);
-    }
+  console.log(err.response?.data);
+  toast.error(
+    err.response?.data?.message || "Failed to create session"
+  );
+}
   };
 
   return (
@@ -63,33 +111,36 @@ export default function CreateLiveSession({ onClose, onSuccess }) {
           Create Live Session
         </h2>
 
+       <input
+  name="title"
+  value={form.title}
+  onChange={handleChange}
+  placeholder="Title"
+  className="w-full border p-3 rounded-lg"
+/>
         <input
-          name="title"
-          placeholder="Title"
-          onChange={handleChange}
-          className="w-full border p-3 rounded-lg"
-        />
-
-        <input
-          name="speaker"
-          placeholder="Speaker"
-          onChange={handleChange}
-          className="w-full border p-3 rounded-lg"
-        />
+  name="speaker"
+  value={form.speaker}
+  onChange={handleChange}
+  placeholder="Speaker"
+  className="w-full border p-3 rounded-lg"
+/>
 
         <textarea
-          name="description"
-          placeholder="Description"
-          onChange={handleChange}
-          className="w-full border p-3 rounded-lg"
-        />
+  name="description"
+  value={form.description}
+  onChange={handleChange}
+  placeholder="Description"
+  className="w-full border p-3 rounded-lg"
+/>
 
         <input
-          type="datetime-local"
-          name="date"
-          onChange={handleChange}
-          className="w-full border p-3 rounded-lg"
-        />
+  type="datetime-local"
+  name="date"
+  value={form.date}
+  onChange={handleChange}
+  className="w-full border p-3 rounded-lg"
+/>
 
         <input
           name="duration"
@@ -98,26 +149,28 @@ export default function CreateLiveSession({ onClose, onSuccess }) {
           className="w-full border p-3 rounded-lg"
         />
 
-        <input
-          name="maxSeats"
-          placeholder="Maximum Seats"
-          onChange={handleChange}
-          className="w-full border p-3 rounded-lg"
-        />
+       <input
+  name="maxSeats"
+  value={form.maxSeats}
+  onChange={handleChange}
+  placeholder="Maximum Seats"
+  className="w-full border p-3 rounded-lg"
+/>
 
-        <input
-          name="meetingLink"
-          placeholder="Meeting Link"
-          onChange={handleChange}
-          className="w-full border p-3 rounded-lg"
-        />
-
-        <input
-          name="image"
-          placeholder="Image URL"
-          onChange={handleChange}
-          className="w-full border p-3 rounded-lg"
-        />
+       <input
+  name="meetingLink"
+  value={form.meetingLink}
+  onChange={handleChange}
+  placeholder="Meeting Link"
+  className="w-full border p-3 rounded-lg"
+/>
+     <input
+  name="image"
+  value={form.image}
+  onChange={handleChange}
+  placeholder="Image URL"
+  className="w-full border p-3 rounded-lg"
+/>
 
         <div className="flex justify-end gap-3">
 

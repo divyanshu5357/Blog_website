@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { generateGoogleCalendarLink } from "../utils/googleCalendar";
 
 export default function RegisterSessionModal({
   open,
@@ -13,6 +14,17 @@ export default function RegisterSessionModal({
   });
 
   const [loading, setLoading] = useState(false);
+  const [registered, setRegistered] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      setRegistered(false);
+      setForm({
+        name: "",
+        email: "",
+      });
+    }
+  }, [open]);
 
   if (!open || !session) return null;
 
@@ -36,12 +48,7 @@ export default function RegisterSessionModal({
 
       toast.success(data.message);
 
-      setForm({
-        name: "",
-        email: "",
-      });
-
-      onClose();
+      setRegistered(true);
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
@@ -51,6 +58,69 @@ export default function RegisterSessionModal({
       setLoading(false);
     }
   };
+
+  // ================= SUCCESS SCREEN =================
+
+  if (registered) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+        <div className="bg-white rounded-2xl w-full max-w-md p-8 shadow-xl text-center">
+
+          <div className="text-6xl mb-4">🎉</div>
+
+          <h2 className="text-2xl font-bold mb-3">
+            Registration Successful!
+          </h2>
+
+          <p className="text-gray-600 mb-6">
+            You have successfully registered for
+            <br />
+            <strong>{session.title}</strong>
+          </p>
+
+          <div className="space-y-3">
+
+            <button
+              onClick={() =>
+                window.open(
+                  generateGoogleCalendarLink(session),
+                  "_blank"
+                )
+              }
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg"
+            >
+              📅 Add to Google Calendar
+            </button>
+
+            {session.meetingLink && (
+              <a
+                href={session.meetingLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg text-center"
+              >
+                🔗 Join Meeting
+              </a>
+            )}
+
+            <button
+              onClick={() => {
+                setRegistered(false);
+                onClose();
+              }}
+              className="w-full border rounded-lg py-3 hover:bg-gray-100"
+            >
+              Close
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
+  // ================= REGISTRATION FORM =================
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
@@ -101,6 +171,7 @@ export default function RegisterSessionModal({
             </button>
 
             <button
+              type="submit"
               disabled={loading}
               className="px-6 py-2 rounded-lg bg-violet-600 text-white"
             >

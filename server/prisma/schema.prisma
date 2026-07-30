@@ -179,11 +179,11 @@ model LiveSession {
 }
 
 model SessionRegistration {
-
   id String @id @default(cuid())
 
   sessionId String
   session   LiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  reminderSent Boolean @default(false)
 
   name String
 

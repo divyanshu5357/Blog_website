@@ -300,29 +300,10 @@ Phase 4 — Production Polish
 
 With these changes, your project will look much closer to a professionally built content platform like Medium or Hashnode rather than a standard CRUD blog, making it a significantly stronger portfolio piece for placements and interviews.
 
-Phase 1 (Current)
-✅ Live Session database
-✅ Admin creates session
-⏳ Homepage fetches sessions
-⏳ Register button works
-Phase 2
-Registration modal
-Save registration
-Duplicate email validation
-Confirmation email
-Phase 3
-Newsletter Subscribe
-Welcome email
-Store subscribers
-Send newsletters
-Phase 4
-Admin registration list
-Export Excel/CSV
-Seat counter
-Countdown timer
-Phase 5
-Reminder emails
-Google Calendar
-Zoom/Meet link
-QR code
-Waitlist
+
+✅ Automatic Session Status Update (do this first)
+✅ Hide completed sessions from homepage
+✅ Block registration for completed sessions
+✅ Waitlist System
+✅ QR Code for Join Link
+✅ Analytics Dashboar

@@ -18,6 +18,13 @@ export const createLiveSessionService = async (data) => {
 
 export const getLiveSessionsService = async () => {
   const sessions = await prisma.liveSession.findMany({
+    include: {
+      _count: {
+        select: {
+          registrations: true,
+        },
+      },
+    },
     orderBy: {
       date: "asc",
     },
@@ -74,12 +81,30 @@ export const registerSessionService = async (
     });
 
   // Send confirmation email
+ try {
+
   await sendEmail({
     to: email,
-    subject: `Registration Confirmed - ${session.title}`,
-    html: registrationEmail(session, name),
-  });
+    subject: "Registration Successful",
+    html: `
+      <h2>Registration Confirmed 🎉</h2>
 
+      <p>Hello <b>${name}</b>,</p>
+
+      <p>You have successfully registered for
+      <b>${session.title}</b>.</p>
+
+      <p><b>Date:</b> ${new Date(session.date).toLocaleString()}</p>
+
+      <p><b>Speaker:</b> ${session.speaker}</p>
+
+      <p>Thank you for registering!</p>
+    `,
+  });
+  } catch (err) {
+
+  console.error("Email sending failed:", err.message);
+  }
   return new ApiResponse(
     201,
     "Registration successful.",
@@ -105,4 +130,60 @@ export const getSessionRegistrationsService = async (
     "Registrations fetched successfully.",
     registrations
   );
+};
+export const updateLiveSessionService = async (
+  id,
+  data
+) => {
+
+  const session = await prisma.liveSession.update({
+    where: {
+      id,
+    },
+    data,
+  });
+
+  return new ApiResponse(
+    200,
+    "Session updated successfully.",
+    session
+  );
+};
+export const deleteLiveSessionService = async (id) => {
+
+  await prisma.liveSession.delete({
+    where: {
+      id,
+    },
+  });
+
+  return new ApiResponse(
+    200,
+    "Session deleted successfully."
+  );
+};
+export const exportRegistrationsService = async (sessionId) => {
+
+  const registrations = await prisma.sessionRegistration.findMany({
+    where: {
+      sessionId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  let csv =
+    "Name,Email,Registered At\n";
+
+  registrations.forEach((user) => {
+
+    csv += `"${user.name}","${user.email}","${new Date(
+      user.createdAt
+    ).toLocaleString()}"\n`;
+
+  });
+
+  return csv;
+
 };
