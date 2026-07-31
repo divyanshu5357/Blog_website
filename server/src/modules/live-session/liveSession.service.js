@@ -18,17 +18,20 @@ export const createLiveSessionService = async (data) => {
 
 export const getLiveSessionsService = async () => {
   const sessions = await prisma.liveSession.findMany({
-    include: {
-      _count: {
-        select: {
-          registrations: true,
-        },
+  where: {
+    status: "UPCOMING",
+  },
+  include: {
+    _count: {
+      select: {
+        registrations: true,
       },
     },
-    orderBy: {
-      date: "asc",
-    },
-  });
+  },
+  orderBy: {
+    date: "asc",
+  },
+});
 
   return new ApiResponse(
     200,
@@ -53,6 +56,20 @@ export const registerSessionService = async (
   if (!session) {
     throw new ApiError(404, "Session not found.");
   }
+  const sessionEndTime = new Date(
+  session.date.getTime() +
+    session.duration * 60 * 1000
+);
+
+if (
+  session.status !== "UPCOMING" ||
+  sessionEndTime <= new Date()
+) {
+  throw new ApiError(
+    400,
+    "Registration has closed for this session."
+  );
+}
 
   const alreadyRegistered =
     await prisma.sessionRegistration.findUnique({

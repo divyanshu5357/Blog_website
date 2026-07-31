@@ -5,10 +5,9 @@ import {
   Folder,
   Users,
   MessageSquare,
-  Image,
-  Settings,
   LogOut,
   CalendarDays,
+  Mail,
 } from "lucide-react";
 
 const menu = [
@@ -17,6 +16,16 @@ const menu = [
     icon: LayoutDashboard,
     path: "/admin/dashboard",
   },
+  {
+  title: "Live Sessions",
+  icon: CalendarDays,
+  path: "/admin/live-sessions",
+},
+{
+  title: "Subscribers",
+  icon: Mail,
+  path: "/admin/subscribers",
+},
   {
     title: "Posts",
     icon: FileText,
@@ -37,21 +46,7 @@ const menu = [
     icon: MessageSquare,
     path: "/admin/comments",
   },
-  {
-    title: "Media",
-    icon: Image,
-    path: "/admin/media",
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    path: "/admin/settings",
-  },
-  {
-  title: "Live Sessions",
-  icon: CalendarDays,
-  path: "/admin/live-sessions",
-},
+ 
 ];
 
 export default function Sidebar() {
@@ -59,7 +54,7 @@ export default function Sidebar() {
     <aside className="w-72 bg-slate-900 text-white flex flex-col">
 
       <div className="text-3xl font-bold p-6 border-b border-slate-700">
-        AARAMBH CMS
+        AARAMBH
       </div>
 
       <nav className="flex-1 mt-6">

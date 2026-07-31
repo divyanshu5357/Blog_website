@@ -300,10 +300,31 @@ Phase 4 — Production Polish
 
 With these changes, your project will look much closer to a professionally built content platform like Medium or Hashnode rather than a standard CRUD blog, making it a significantly stronger portfolio piece for placements and interviews.
 
-
+🚧 Next Features
 ✅ Automatic Session Status Update (do this first)
 ✅ Hide completed sessions from homepage
 ✅ Block registration for completed sessions
 ✅ Waitlist System
 ✅ QR Code for Join Link
 ✅ Analytics Dashboar
+✅ Header.jsx (Completed)
+
+✅ Hero.jsx (Completed)
+
+✅ LiveSessions.jsx (Completed)
+
+⏳ About.jsx
+
+⏳ Categories.jsx
+
+⏳ Articles.jsx
+
+⏳ MostRead.jsx
+
+⏳ Resources.jsx
+
+⏳ Subscribe.jsx
+
+⏳ Community.jsx
+
+⏳ Footer.jsx

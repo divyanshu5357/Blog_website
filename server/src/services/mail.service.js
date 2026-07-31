@@ -20,16 +20,17 @@ export const verifyMail = async () => {
     console.error("SMTP Error:", err.message);
   }
 };
-
 export const sendEmail = async ({
   to,
   subject,
   html,
+  attachments = [],
 }) => {
   await transporter.sendMail({
     from: env.MAIL_FROM,
     to,
     subject,
     html,
+    attachments,
   });
 };

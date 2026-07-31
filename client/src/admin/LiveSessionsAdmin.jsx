@@ -10,14 +10,14 @@ import {
   X, 
   Calendar, 
   User as UserIcon,
-  Loader2
+  Loader2,
+  Download
 } from "lucide-react";
 
 import CreateLiveSession from "./CreateLiveSession";
 import DeleteModal from "../components/DeleteModal";
 import CountdownTimer from "../components/CountdownTimer";
 
-// Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
@@ -139,16 +139,15 @@ export default function LiveSessionsAdmin() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      {/* Header */}
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Live Sessions</h1>
-          <p className="text-gray-500 mt-1">Manage your upcoming and past events.</p>
+          <p className="text-gray-500 mt-1 text-sm sm:text-base">Manage your upcoming and past events.</p>
         </div>
         <button
           onClick={openAddForm}
-          className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm"
+          className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 shadow-sm"
         >
           <Plus size={20} />
           Add Session
@@ -169,10 +168,9 @@ export default function LiveSessionsAdmin() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch"
         >
           {sessions.map((session) => {
-            // STEP 4: Better Status Logic calculated per session
             const now = new Date();
             const sessionDate = new Date(session.date);
             let badge = {
@@ -188,85 +186,90 @@ export default function LiveSessionsAdmin() {
 
             return (
               <motion.div
+            
                 variants={itemVariants}
                 key={session.id}
-                className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+                className="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col h-full overflow-hidden"
               >
-                <div>
+                {session.image && (
+  <img
+    src={session.image}
+    alt={session.title}
+    className="w-full h-52 object-cover"
+  />
+)}
+                <div className="p-5 sm:p-6 flex flex-col flex-1">
+                  
                   <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h2 className="text-xl font-bold text-gray-900 mb-1">
-                        {session.title}
-                      </h2>
-                      <div className="flex flex-col gap-1 text-sm text-gray-500 mt-2">
-                        <span className="flex items-center gap-1.5">
-                          <UserIcon size={16} className="text-violet-500" />
-                          {session.speaker}
-                        </span>
-                        <span className="flex items-center gap-1.5 mt-1">
-                          <Calendar size={16} className="text-violet-500" />
-                          {new Date(session.date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                        
-                        {/* STEP 3: Countdown Timer */}
-                        <div className="mt-2 text-violet-600 font-medium">
-                          <CountdownTimer
-  targetDate={session.date}
-  duration={session.duration}
-/>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Render dynamically calculated badge */}
-                    <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${badge.className}`}>
+                    <span className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                      <Calendar size={14} className="text-violet-500" />
+                      {new Date(session.date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <span className={`px-3 py-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-lg ${badge.className}`}>
                       {badge.text}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 mb-6 py-4 border-y border-gray-50 mt-4">
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Seats</p>
-                      <p className="text-lg font-bold text-gray-900">{session.maxSeats}</p>
+                  <h2 className="text-xl font-bold text-gray-900 mb-2 leading-tight font-sans line-clamp-2" title={session.title}>
+                    {session.title}
+                  </h2>
+                  <div className="flex items-center gap-2 text-sm text-gray-500 mb-5">
+                    <UserIcon size={16} className="text-gray-400" />
+                    <span className="font-medium line-clamp-1">{session.speaker}</span>
+                  </div>
+
+                  <div className="mb-5 w-full">
+                    <CountdownTimer targetDate={session.date} />
+                  </div>
+
+                  <div className="mt-auto grid grid-cols-3 gap-2 bg-gray-50 rounded-xl p-4 text-center border border-gray-100">
+                    <div>
+                      <p className="text-[10px] sm:text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Seats</p>
+                      <p className="text-lg sm:text-xl font-black text-gray-900">{session.maxSeats}</p>
                     </div>
-                    <div className="text-center border-l border-gray-50">
-                      <p className="text-xs text-blue-500 uppercase font-semibold mb-1">Registered</p>
-                      <p className="text-lg font-bold text-blue-600">{session._count?.registrations || 0}</p>
+                    <div className="border-l border-gray-200">
+                      <p className="text-[10px] sm:text-xs text-blue-500 uppercase font-bold tracking-wider mb-1">Reg</p>
+                      <p className="text-lg sm:text-xl font-black text-blue-600">{session._count?.registrations || 0}</p>
                     </div>
-                    <div className="text-center border-l border-gray-50">
-                      <p className="text-xs text-green-500 uppercase font-semibold mb-1">Remaining</p>
-                      <p className="text-lg font-bold text-green-600">{session.maxSeats - (session._count?.registrations || 0)}</p>
+                    <div className="border-l border-gray-200">
+                      <p className="text-[10px] sm:text-xs text-green-500 uppercase font-bold tracking-wider mb-1">Left</p>
+                      <p className="text-lg sm:text-xl font-black text-green-600">{session.maxSeats - (session._count?.registrations || 0)}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2 justify-end">
+                <div className="p-4 sm:p-5 border-t border-gray-100 bg-gray-50 flex flex-wrap sm:flex-nowrap gap-2 items-center">
                   <button
                     onClick={() => viewRegistrations(session)}
-                    className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 border border-gray-200"
+                    className="flex-1 min-w-[120px] bg-white hover:bg-violet-50 text-gray-700 hover:text-violet-700 px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 border border-gray-200 shadow-sm"
                   >
                     <Users size={16} />
-                    Attendees
+                    <span>Attendees</span>
                   </button>
                   <button
                     onClick={() => exportRegistrations(session.id)}
-                    className="bg-green-50 hover:bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-semibold transition-colors border border-transparent flex items-center gap-2"
+                    className="flex-1 min-w-[120px] bg-white hover:bg-green-50 text-gray-700 hover:text-green-700 px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 border border-gray-200 shadow-sm"
                   >
-                    📥 Export CSV
+                    <Download size={16} />
+                    <span>Export</span>
                   </button>
-                  <button
-                    onClick={() => openEditForm(session)}
-                    className="bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 border border-transparent"
-                  >
-                    <Edit2 size={16} />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => requestDelete(session.id)}
-                    className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 border border-transparent"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  
+                  <div className="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                    <button
+                      onClick={() => openEditForm(session)}
+                      className="flex-1 sm:flex-none bg-white hover:bg-blue-50 text-gray-400 hover:text-blue-600 p-2.5 rounded-lg transition-colors border border-gray-200 shadow-sm flex justify-center items-center"
+                      title="Edit Session"
+                    >
+                      <Edit2 size={18} />
+                    </button>
+                    <button
+                      onClick={() => requestDelete(session.id)}
+                      className="flex-1 sm:flex-none bg-white hover:bg-red-50 text-gray-400 hover:text-red-600 p-2.5 rounded-lg transition-colors border border-gray-200 shadow-sm flex justify-center items-center"
+                      title="Delete Session"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             );
@@ -274,7 +277,6 @@ export default function LiveSessionsAdmin() {
         </motion.div>
       )}
 
-      {/* Registrations Modal */}
       <AnimatePresence>
         {showModal && (
           <div className="fixed inset-0 z-50 flex justify-center items-center p-4 bg-black/40 backdrop-blur-sm">
@@ -342,7 +344,6 @@ export default function LiveSessionsAdmin() {
         )}
       </AnimatePresence>
 
-      {/* Create / Edit Form Component */}
       {showForm && (
         <CreateLiveSession
           session={selectedSession}
@@ -354,7 +355,7 @@ export default function LiveSessionsAdmin() {
         />
       )}
 
-      {/* Delete Confirmation Modal */}
+
       <DeleteModal 
         isOpen={sessionToDelete !== null} 
         onClose={() => setSessionToDelete(null)} 

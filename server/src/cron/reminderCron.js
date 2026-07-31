@@ -1,12 +1,26 @@
 import cron from "node-cron";
 import { sendReminderEmails } from "../services/reminder.service.js";
 
-export const startReminderCron = () => {
-  cron.schedule("0 * * * *", async () => {
-console.log("⏰ Checking for reminder emails...");
+let isRunning = false;
 
-await sendReminderEmails();
-});
+export const startReminderCron = () => {
+  cron.schedule("* * * * *", async () => {
+    if (isRunning) {
+      console.log("⏭️ Reminder cron skipped (previous job still running)");
+      return;
+    }
+
+    isRunning = true;
+
+    try {
+      console.log("⏰ Checking for reminder emails...");
+      await sendReminderEmails();
+    } catch (err) {
+      console.error("Reminder Cron Error:", err);
+    } finally {
+      isRunning = false;
+    }
+  });
 
   console.log("✅ Reminder Cron Started");
 };

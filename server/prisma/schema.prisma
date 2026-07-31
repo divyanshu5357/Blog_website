@@ -193,7 +193,15 @@ model SessionRegistration {
 
   @@unique([sessionId,email])
 }
+model Subscriber {
+  id        String   @id @default(cuid())
 
+  email     String   @unique
+
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
 enum SessionStatus{
   UPCOMING
   LIVE

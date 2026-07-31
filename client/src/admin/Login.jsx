@@ -70,7 +70,7 @@ navigate("/admin/dashboard");
           boxShadow: "0 5px 20px rgba(0,0,0,.1)",
         }}
       >
-        <h2>AARAMBH CMS</h2>
+        <h2>AARAMBH</h2>
 
         <input
           type="email"

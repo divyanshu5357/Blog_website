@@ -541,6 +541,14 @@ h3 {
   grid-template-columns: 82px 1fr auto;
   padding: 20px;
 }
+.session-banner {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
 
 .session-row:last-child {
   border-bottom: 0;

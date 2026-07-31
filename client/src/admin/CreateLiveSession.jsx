@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-
+import { uploadImage } from "../services/posts.service";
 export default function CreateLiveSession({
   onClose,
   onSuccess,
@@ -19,6 +19,9 @@ export default function CreateLiveSession({
   meetingLink: session?.meetingLink || "",
   image: session?.image || "",
 });
+const [uploading, setUploading] = useState(false);
+const [preview, setPreview] = useState(session?.image || "");
+
 
 useEffect(() => {
   if (session) {
@@ -34,6 +37,8 @@ useEffect(() => {
       meetingLink: session.meetingLink || "",
       image: session.image || "",
     });
+
+    setPreview(session.image || "");
   }
 }, [session]);
   const handleChange = (e) => {
@@ -43,6 +48,31 @@ useEffect(() => {
     });
   };
 
+  const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  try {
+    setUploading(true);
+
+    const res = await uploadImage(file);
+
+    setForm((prev) => ({
+      ...prev,
+      image: res.data.url,
+    }));
+
+    setPreview(res.data.url);
+
+    toast.success("Image uploaded successfully.");
+  } catch (err) {
+    console.error(err);
+    toast.error("Image upload failed.");
+  } finally {
+    setUploading(false);
+  }
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -164,13 +194,32 @@ useEffect(() => {
   placeholder="Meeting Link"
   className="w-full border p-3 rounded-lg"
 />
-     <input
-  name="image"
-  value={form.image}
-  onChange={handleChange}
-  placeholder="Image URL"
-  className="w-full border p-3 rounded-lg"
-/>
+    <div>
+  <label className="block mb-2 font-medium">
+    Session Banner
+  </label>
+
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageUpload}
+    className="w-full border p-3 rounded-lg"
+  />
+
+  {uploading && (
+    <p className="text-blue-600 mt-2">
+      Uploading...
+    </p>
+  )}
+
+  {preview && (
+    <img
+      src={preview}
+      alt="Session Banner"
+      className="mt-4 w-72 h-40 object-cover rounded-lg border"
+    />
+  )}
+</div>
 
         <div className="flex justify-end gap-3">
 

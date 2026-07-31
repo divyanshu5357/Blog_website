@@ -14,14 +14,20 @@ import commentRoutes from "./modules/comments/comment.routes.js";
 import searchRoutes from "./modules/search/search.routes.js";
 import liveSessionRoutes from "./modules/live-session/liveSession.routes.js";
 import { startReminderCron } from "./cron/reminderCron.js";
-
+import { startSessionStatusCron } from "./cron/sessionStatusCron.js";
+import subscriberRoutes from "./modules/subscribers/subscriber.routes.js";
 import passport from "./modules/public-auth/passport.js";
 import publicAuthRoutes from "./modules/public-auth/public-auth.routes.js";
 
 const app = express();
 
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(helmet());
 
@@ -50,7 +56,9 @@ app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/search", searchRoutes);
 app.use(  "/api/live-sessions",  liveSessionRoutes);
+app.use("/api/subscribers", subscriberRoutes);
 app.use(errorHandler);
 startReminderCron();
+startSessionStatusCron();
 
 export default app;

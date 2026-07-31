@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { generateGoogleCalendarLink } from "../utils/googleCalendar";
+import QRCode from "react-qr-code";
 
 export default function RegisterSessionModal({
   open,
