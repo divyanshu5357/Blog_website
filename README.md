@@ -312,19 +312,3 @@ With these changes, your project will look much closer to a professionally built
 ✅ Hero.jsx (Completed)
 
 ✅ LiveSessions.jsx (Completed)
-
-⏳ About.jsx
-
-⏳ Categories.jsx
-
-⏳ Articles.jsx
-
-⏳ MostRead.jsx
-
-⏳ Resources.jsx
-
-⏳ Subscribe.jsx
-
-⏳ Community.jsx
-
-⏳ Footer.jsx
