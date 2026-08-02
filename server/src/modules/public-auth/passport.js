@@ -1,8 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
-console.log("CLIENT_ID =", process.env.GOOGLE_CLIENT_ID);
-console.log("CALLBACK =", process.env.GOOGLE_CALLBACK_URL);
 
 passport.use(
   new GoogleStrategy(
