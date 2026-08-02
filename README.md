@@ -18,8 +18,6 @@ Designed with scalability, security, and maintainability in mind, this project f
 - API Rate Limiting
 - CORS Protection
 
----
-
 ### 📝 Blog Management
 
 - Create Blog
@@ -214,18 +212,6 @@ npm run build
 
 The application supports multiple languages using **i18next** and browser language detection.
 
----
-
-## 📸 Screenshots
-
-> Add screenshots of:
-
-- Home Page
-- Blog Details
-- Admin Dashboard
-- Create Blog
-- Rich Text Editor
-- Mobile View
 
 ---
 
