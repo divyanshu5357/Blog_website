@@ -243,10 +243,7 @@ Fork the repository and submit a Pull Request.
 
 This project is licensed under the MIT License.
 
----
-
-## 👨‍💻 Author
-
+Build by 
 **Divyanshu Pratap Singh**
 
 GitHub: https://github.com/divyanshu5357
