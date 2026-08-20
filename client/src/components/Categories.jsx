@@ -39,10 +39,10 @@ function Categories() {
   return (
     <section className="py-24 bg-white relative" id="blogs">
       <div className="max-w-7xl mx-auto px-5">
-        
+
         {/* Animated Section Header */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -65,7 +65,7 @@ function Categories() {
             ))}
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             variants={container}
             initial="hidden"
             whileInView="show"
@@ -74,22 +74,22 @@ function Categories() {
           >
             {categories.map((category) => (
               <motion.div key={category.id} variants={item}>
-                <Link 
+                <Link
                   to={`/category/${category.slug}`}
                   className="block group bg-[#fefaf8] p-8 rounded-3xl border border-amber-900/5 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 h-full flex flex-col"
                 >
                   <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 bg-amber-100 text-amber-600">
                     <Brain size={32} strokeWidth={1.5} />
                   </div>
-                  
+
                   <h3 className="text-2xl font-bold text-[#4A2B4D] mb-2 group-hover:text-amber-600 transition-colors">
                     {category.name}
                   </h3>
-                  
+
                   <p className="text-gray-500 text-sm font-medium line-clamp-2 mb-6 flex-1">
                     {category.description || "Explore articles from this category."}
                   </p>
-                  
+
                   <div className="flex items-center gap-2 text-amber-600 text-sm font-bold uppercase tracking-wider group-hover:translate-x-2 transition-transform mt-auto">
                     Explore <ArrowRight size={16} />
                   </div>

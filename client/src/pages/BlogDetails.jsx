@@ -6,11 +6,11 @@ import { Heart, Eye, Clock, User, ArrowLeft } from "lucide-react";
 import DeleteModal from "../components/DeleteModal";
 import ShareButtons from "../components/blog/ShareButtons";
 
-import { 
-  createComment, 
-  getComments, 
-  updateComment, 
-  deleteComment 
+import {
+  createComment,
+  getComments,
+  updateComment,
+  deleteComment
 } from "../services/comment.service";
 import { usePublicUser } from "../context/PublicUserContext";
 import CommentBox from "../components/comments/CommentBox";
@@ -104,10 +104,10 @@ export default function BlogDetails() {
   const handleReply = (comment) => {
     setReplyingTo(comment.id);
   };
-  
+
   const handleCancelReply = () => {
     setReplyingTo(null);
-    setCommentForm({ content: "" }); 
+    setCommentForm({ content: "" });
   };
 
   const handleUpdate = async () => {
@@ -129,11 +129,11 @@ export default function BlogDetails() {
 
   const confirmDelete = async () => {
     if (!commentToDelete) return;
-    
+
     try {
       await deleteComment(commentToDelete);
       setComments((prev) => prev.filter((comment) => comment.id !== commentToDelete));
-      setCommentToDelete(null); 
+      setCommentToDelete(null);
     } catch (err) {
       console.log(err);
     }
@@ -152,11 +152,11 @@ export default function BlogDetails() {
       />
 
       <div className="max-w-4xl mx-auto py-10 md:py-16 px-5">
-        
+
         {post ? (
-          <motion.div 
-            initial={{ opacity: 0, x: -15 }} 
-            animate={{ opacity: 1, x: 0 }} 
+          <motion.div
+            initial={{ opacity: 0, x: -15 }}
+            animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-1.5 mb-8 text-sm font-semibold text-gray-500"
           >
             <Link
@@ -252,9 +252,8 @@ export default function BlogDetails() {
                 whileTap={{ scale: 0.95 }}
                 onClick={handleLike}
                 disabled={liked}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-colors ml-auto md:ml-0 ${
-                  liked ? "bg-red-50 text-red-500 cursor-default" : "hover:bg-gray-50 text-gray-500"
-                }`}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-colors ml-auto md:ml-0 ${liked ? "bg-red-50 text-red-500 cursor-default" : "hover:bg-gray-50 text-gray-500"
+                  }`}
               >
                 <motion.div animate={liked ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
                   <Heart size={16} fill={liked ? "currentColor" : "none"} className={liked ? "text-red-500" : ""} />
@@ -314,18 +313,18 @@ export default function BlogDetails() {
               onUpdate={handleUpdate}
               onCancel={handleCancelEdit}
               onEdit={handleEdit}
-              onDelete={requestDelete} 
+              onDelete={requestDelete}
               onReply={handleReply}
               onCancelReply={handleCancelReply}
             />
-            
-            <DeleteModal 
-              isOpen={commentToDelete !== null} 
-              onClose={() => setCommentToDelete(null)} 
-              onConfirm={confirmDelete} 
+
+            <DeleteModal
+              isOpen={commentToDelete !== null}
+              onClose={() => setCommentToDelete(null)}
+              onConfirm={confirmDelete}
             />
           </div>
-          
+
         </div>
 
       </div>

@@ -1,8 +1,8 @@
 import Header from "../components/Header";
 import Hero from "../components/Hero";
-import AboutSection from "../components/AboutSection";
-import CategoriesSection from "../components/CategoriesSection";
-import FeaturedArticles from "../components/FeaturedArticles";
+import About from "../components/About";
+import Categories from "../components/Categories";
+import Articles from "../components/Articles";
 import LiveSessions from "../components/LiveSessions";
 import MostRead from "../components/MostRead";
 import Resources from "../components/Resources";
@@ -16,9 +16,9 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <AboutSection />
-        <CategoriesSection />
-        <FeaturedArticles />
+        <About />
+        <Categories />
+        <Articles />
         <LiveSessions />
         <MostRead />
         <Resources />
