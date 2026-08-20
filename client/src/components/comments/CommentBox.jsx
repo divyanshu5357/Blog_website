@@ -1,5 +1,7 @@
 import { LogOut, X } from "lucide-react"; // <-- Import X
 import EmojiPickerButton from "./EmojiPickerButton";
+import { API_BASE_URL } from "../../config/api";
+
 export default function CommentBox({
   publicUser,
   commentForm,
@@ -30,8 +32,7 @@ export default function CommentBox({
           <div className="flex items-center gap-3">
             <button
               onClick={() =>
-                (window.location.href =
-                  "http://localhost:8000/api/public-auth/google")
+                (window.location.href = `${API_BASE_URL}/public-auth/google`)
               }
               className="flex items-center gap-3 border border-gray-300 rounded-lg px-5 py-2.5 hover:bg-gray-50 transition-colors"
             >

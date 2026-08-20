@@ -17,6 +17,7 @@ import {
 import CreateLiveSession from "./CreateLiveSession";
 import DeleteModal from "../components/DeleteModal";
 import CountdownTimer from "../components/CountdownTimer";
+import { API_BASE_URL } from "../config/api";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -42,7 +43,7 @@ export default function LiveSessionsAdmin() {
   const fetchSessions = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:8000/api/live-sessions",
+        `${API_BASE_URL}/live-sessions`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSessions(data.data);
@@ -62,7 +63,7 @@ export default function LiveSessionsAdmin() {
       setShowModal(true);
 
       const { data } = await axios.get(
-        `http://localhost:8000/api/live-sessions/${session.id}/registrations`,
+        `${API_BASE_URL}/live-sessions/${session.id}/registrations`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -82,7 +83,7 @@ export default function LiveSessionsAdmin() {
     if (!sessionToDelete) return;
     try {
       await axios.delete(
-        `http://localhost:8000/api/live-sessions/${sessionToDelete}`,
+        `${API_BASE_URL}/live-sessions/${sessionToDelete}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success("Session deleted successfully.");
@@ -106,7 +107,7 @@ export default function LiveSessionsAdmin() {
   const exportRegistrations = async (id) => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/live-sessions/${id}/export`,
+        `${API_BASE_URL}/live-sessions/${id}/export`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

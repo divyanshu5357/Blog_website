@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { uploadImage } from "../services/posts.service";
+import { API_BASE_URL } from "../config/api";
+
 export default function CreateLiveSession({
   onClose,
   onSuccess,
@@ -80,7 +82,7 @@ useEffect(() => {
     if (session) {
 
   await axios.put(
-    `http://localhost:8000/api/live-sessions/${session.id}`,
+    `${API_BASE_URL}/live-sessions/${session.id}`,
     {
       ...form,
       date: new Date(form.date).toISOString(),
@@ -99,7 +101,7 @@ useEffect(() => {
 } else {
 
   await axios.post(
-    "http://localhost:8000/api/live-sessions",
+    `${API_BASE_URL}/live-sessions`,
     {
       ...form,
       date: new Date(form.date).toISOString(),

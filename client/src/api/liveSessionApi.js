@@ -1,8 +1,9 @@
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 export const getPublicSessions = async () => {
   const res = await axios.get(
-    "http://localhost:8000/api/live-sessions/public"
+    `${API_BASE_URL}/live-sessions/public`
   );
 
   return res.data.data;
@@ -11,10 +12,10 @@ export const getSessionRegistrations = async (
   sessionId
 ) => {
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
 
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/api/live-sessions/${sessionId}/registrations`,
+    `${API_BASE_URL}/live-sessions/${sessionId}/registrations`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

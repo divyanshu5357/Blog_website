@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { generateGoogleCalendarLink } from "../utils/googleCalendar";
 import QRCode from "react-qr-code";
+import { API_BASE_URL } from "../config/api";
 
 export default function RegisterSessionModal({
   open,
@@ -43,7 +44,7 @@ export default function RegisterSessionModal({
       setLoading(true);
 
       const { data } = await axios.post(
-        `http://localhost:8000/api/live-sessions/${session.id}/register`,
+        `${API_BASE_URL}/live-sessions/${session.id}/register`,
         form
       );
 

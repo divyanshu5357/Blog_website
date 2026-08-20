@@ -5,6 +5,7 @@ import RelatedPosts from "../components/blog/RelatedPosts";
 import { Heart, Eye, Clock, User, ArrowLeft } from "lucide-react";
 import DeleteModal from "../components/DeleteModal";
 import ShareButtons from "../components/blog/ShareButtons";
+import { API_BASE_URL } from "../config/api";
 
 import {
   createComment,
@@ -79,7 +80,7 @@ export default function BlogDetails() {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!publicUser) {
-      window.location.href = "http://localhost:8000/api/public-auth/google";
+      window.location.href = `${API_BASE_URL}/public-auth/google`;
       return;
     }
     try {
