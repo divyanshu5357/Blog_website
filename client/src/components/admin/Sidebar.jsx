@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   FileText,
@@ -55,14 +55,23 @@ const menu = [
 ];
 
 export default function Sidebar() {
-  return (
-    <aside className="w-72 bg-slate-900 text-white flex flex-col">
+  const navigate = useNavigate();
 
-      <div className="text-3xl font-bold p-6 border-b border-slate-700">
+  const handleLogout = () => {
+    // Remove only CMS admin auth — never touch publicToken or publicUser
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    navigate("/admin/login");
+  };
+
+  return (
+    <aside className="w-72 bg-slate-900 text-white flex flex-col h-full">
+
+      <div className="text-3xl font-bold p-6 border-b border-slate-700 flex-shrink-0">
         AARAMBH
       </div>
 
-      <nav className="flex-1 mt-6">
+      <nav className="flex-1 mt-6 overflow-y-auto">
 
         {menu.map((item) => {
           const Icon = item.icon;
@@ -88,7 +97,9 @@ export default function Sidebar() {
       </nav>
 
       <button
-        className="flex items-center gap-3 p-6 border-t border-slate-700 hover:bg-red-600 transition"
+        type="button"
+        onClick={handleLogout}
+        className="flex items-center gap-3 p-6 border-t border-slate-700 hover:bg-red-600 transition flex-shrink-0 w-full text-left"
       >
         <LogOut size={20} />
         Logout
