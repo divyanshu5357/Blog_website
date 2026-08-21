@@ -7,6 +7,7 @@ import {
   Heart,
   MessageCircle,
   FileCheck,
+  Mail,
 } from "lucide-react";
 
 import { getDashboard } from "../services/dashboard.service";
@@ -68,6 +69,12 @@ export default function Dashboard() {
     value: dashboard.stats.totalUsers,
     icon: Users,
     color: "bg-green-600",
+  },
+  {
+    title: "Subscribers",
+    value: dashboard.stats.totalSubscribers || 0,
+    icon: Mail,
+    color: "bg-indigo-600",
   },
   {
     title: "Comments",

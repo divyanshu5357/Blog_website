@@ -28,6 +28,7 @@ import LiveSessionsAdmin from "./admin/LiveSessionsAdmin";
 import CreateLiveSession from "./admin/CreateLiveSession";
 import Subscribers from "./admin/Subscribers";
 import Media from "./admin/Media";
+import Settings from "./admin/Settings";
 
 function App() {
   return (
@@ -65,6 +66,7 @@ function App() {
           <Route path="sessions/new" element={<CreateLiveSession />} />
           <Route path="subscribers" element={<Subscribers />} />
           <Route path="media" element={<Media />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </>

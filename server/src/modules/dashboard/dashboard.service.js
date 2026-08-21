@@ -11,6 +11,7 @@ export const getDashboardService = async () => {
     totalComments,
     viewStats,
     likeStats,
+    totalSubscribers,
   ] = await Promise.all([
     prisma.post.count(),
 
@@ -43,6 +44,8 @@ export const getDashboardService = async () => {
         likes: true,
       },
     }),
+
+    prisma.subscriber.count(),
   ]);
 
   const recentPosts = await prisma.post.findMany({
@@ -99,6 +102,7 @@ export const getDashboardService = async () => {
         totalCategories,
         totalUsers,
         totalComments,
+        totalSubscribers,
         totalViews: viewStats._sum.views || 0,
         totalLikes: likeStats._sum.likes || 0,
       },

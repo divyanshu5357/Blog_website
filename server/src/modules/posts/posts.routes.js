@@ -13,6 +13,7 @@ import {
   getFeaturedPosts,
   likePost,
   getRelatedPosts,
+  getTrendingPosts,
 } from "./posts.controller.js";
 import {
   protect,
@@ -21,6 +22,7 @@ import {
 
 const router = Router();
 router.get("/public/all", getPublishedPosts);
+router.get("/public/trending", getTrendingPosts);
 
 router.get("/", protect, getPosts);
 router.get("/related/:slug",getRelatedPosts);

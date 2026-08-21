@@ -35,3 +35,11 @@ export const getRelatedPosts = async (slug) => {
 
   return data;
 };
+
+export const getTrendingPosts = async (limit = 6) => {
+  const { data } = await api.get(
+    `/posts/public/trending?limit=${limit}`
+  );
+
+  return data;
+};

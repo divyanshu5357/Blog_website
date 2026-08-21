@@ -8,6 +8,7 @@ import {
   LogOut,
   CalendarDays,
   Mail,
+  Settings as SettingsIcon,
 } from "lucide-react";
 
 const menu = [
@@ -17,15 +18,15 @@ const menu = [
     path: "/admin/dashboard",
   },
   {
-  title: "Live Sessions",
-  icon: CalendarDays,
-  path: "/admin/live-sessions",
-},
-{
-  title: "Subscribers",
-  icon: Mail,
-  path: "/admin/subscribers",
-},
+    title: "Live Sessions",
+    icon: CalendarDays,
+    path: "/admin/live-sessions",
+  },
+  {
+    title: "Subscribers",
+    icon: Mail,
+    path: "/admin/subscribers",
+  },
   {
     title: "Posts",
     icon: FileText,
@@ -46,7 +47,11 @@ const menu = [
     icon: MessageSquare,
     path: "/admin/comments",
   },
- 
+  {
+    title: "Settings",
+    icon: SettingsIcon,
+    path: "/admin/settings",
+  },
 ];
 
 export default function Sidebar() {

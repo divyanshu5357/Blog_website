@@ -557,3 +557,32 @@ export const getRelatedPostsService = async (slug) => {
     posts
   );
 };
+
+export const getTrendingPostsService = async (limit = 6) => {
+  const posts = await prisma.post.findMany({
+    where: {
+      status: "PUBLISHED",
+    },
+    take: Number(limit) || 6,
+    orderBy: [
+      { views: "desc" },
+      { likes: "desc" },
+    ],
+    include: {
+      category: true,
+      author: {
+        select: {
+          firstName: true,
+          lastName: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+
+  return new ApiResponse(
+    200,
+    "Trending posts fetched successfully.",
+    posts
+  );
+};

@@ -241,3 +241,17 @@ enum PostVisibility {
   PUBLIC
   PRIVATE
 }
+
+model Setting {
+  id              String   @id @default("default")
+  siteName        String   @default("AARAMBH")
+  siteDescription String   @default("A modern CMS for blogging and live sessions.")
+  contactEmail    String   @default("contact@aarambh.com")
+  footerText      String   @default("© 2026 Aarambh CMS. All rights reserved.")
+  maintenanceMode Boolean  @default(false)
+  socialTwitter   String?
+  socialGithub    String?
+  socialLinkedin  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

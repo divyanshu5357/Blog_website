@@ -13,6 +13,7 @@ import {
   getFeaturedPostsService,
   likePostService,
   getRelatedPostsService,
+  getTrendingPostsService,
 } from "./posts.service.js";
 
 
@@ -119,6 +120,15 @@ export const getRelatedPosts = async (
       .status(response.statusCode)
       .json(response);
 
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getTrendingPosts = async (req, res, next) => {
+  try {
+    const response = await getTrendingPostsService(req.query.limit);
+    res.status(response.statusCode).json(response);
   } catch (err) {
     next(err);
   }
