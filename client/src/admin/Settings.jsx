@@ -114,14 +114,14 @@ export default function Settings() {
                 Contact Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-3 text-slate-400" size={18} />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <input
                   type="email"
                   name="contactEmail"
                   value={form.contactEmail}
                   onChange={handleChange}
                   placeholder="contact@aarambh.com"
-                  className="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                  className="w-full border border-slate-300 rounded-xl pl-11 pr-4 py-2.5 text-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none transition"
                 />
               </div>
             </div>
