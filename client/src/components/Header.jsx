@@ -45,15 +45,16 @@ function Header() {
           </a>
         </div>
 
-        {/* Desktop Navigation (Center & Right) */}
+        {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center justify-end flex-1 gap-5 xl:gap-7" aria-label={t("nav.primaryNavigation")}>
           {navLinks.map((item) => (
             <a
               key={item.key}
               href={item.href}
-              className="text-[#4A2B4D] font-semibold text-sm xl:text-[15px] hover:text-amber-600 transition-colors whitespace-nowrap leading-none"
+              className="relative text-[#4A2B4D] font-semibold text-sm xl:text-[15px] hover:text-amber-700 transition-colors duration-200 whitespace-nowrap leading-none py-1 group"
             >
-              {item.label}
+              <span>{item.label}</span>
+              <span className="absolute bottom-0 left-0 w-0 group-hover:w-full h-[2px] bg-amber-600 transition-all duration-200 ease-out" />
             </a>
           ))}
 
@@ -62,14 +63,15 @@ function Header() {
             <LanguageSwitcher />
           </div>
 
-          {/* Compact Subscribe CTA */}
+          {/* Compact Premium Subscribe CTA Button */}
           <a
             href="#contact"
             onClick={handleSubscribeClick}
-            className="inline-flex items-center gap-1.5 bg-[#4A2B4D] hover:bg-[#361f38] text-white font-semibold text-xs xl:text-sm px-4 py-1.5 rounded-full whitespace-nowrap transition-colors shadow-xs leading-none"
+            aria-label="Subscribe to newsletter"
+            className="inline-flex items-center gap-1.5 bg-[#4A2B4D] hover:bg-[#361f38] text-white font-semibold text-xs xl:text-sm px-4 py-1.5 rounded-full whitespace-nowrap transition-colors duration-200 shadow-xs leading-none border border-amber-400/20"
           >
             <Mail size={14} className="text-amber-400" />
-            <span>Subscribe</span>
+            <span className="text-white font-semibold">Subscribe</span>
           </a>
         </nav>
 
@@ -99,7 +101,7 @@ function Header() {
                   key={item.key}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="text-base font-semibold text-[#4A2B4D] hover:text-amber-600 transition-colors whitespace-nowrap"
+                  className="text-base font-semibold text-[#4A2B4D] hover:text-amber-700 transition-colors whitespace-nowrap"
                 >
                   {item.label}
                 </a>
@@ -110,10 +112,11 @@ function Header() {
                 <a
                   href="#contact"
                   onClick={handleSubscribeClick}
+                  aria-label="Subscribe to newsletter"
                   className="inline-flex items-center gap-1.5 bg-[#4A2B4D] hover:bg-[#361f38] text-white font-semibold text-xs px-4 py-2 rounded-full whitespace-nowrap transition-colors shadow-xs"
                 >
                   <Mail size={14} className="text-amber-400" />
-                  <span>Subscribe</span>
+                  <span className="text-white font-semibold">Subscribe</span>
                 </a>
               </div>
             </nav>

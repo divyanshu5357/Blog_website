@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getBlogBySlug, likeBlog, getRelatedPosts } from "../services/public.service";
 import RelatedPosts from "../components/blog/RelatedPosts";
-import { Heart, Eye, Clock, User, ArrowLeft } from "lucide-react";
+import { Heart, Eye, Clock, User, ArrowLeft, BookOpen, BookOpenCheck } from "lucide-react";
 import DeleteModal from "../components/DeleteModal";
 import ShareButtons from "../components/blog/ShareButtons";
 import { API_BASE_URL } from "../config/api";
@@ -36,6 +36,7 @@ export default function BlogDetails() {
   const { publicUser } = usePublicUser();
   const [replyingTo, setReplyingTo] = useState(null);
   const [commentToDelete, setCommentToDelete] = useState(null);
+  const [readingMode, setReadingMode] = useState(false);
 
   const { scrollYProgress } = useScroll();
   const [commentForm, setCommentForm] = useState({ content: "" });
@@ -158,186 +159,225 @@ export default function BlogDetails() {
         />
       )}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-violet-600 z-50 origin-left"
+        className="fixed top-0 left-0 right-0 h-1 bg-amber-600 z-50 origin-left"
         style={{ scaleX: scrollYProgress }}
       />
 
-      <div className="max-w-4xl mx-auto py-10 md:py-16 px-5">
+      <div className={`transition-all duration-300 py-10 md:py-16 px-4 md:px-6 ${readingMode ? "bg-[#FAF6F0] text-[#2C2622]" : ""}`}>
+        <div className={`mx-auto transition-all duration-300 ${readingMode ? "max-w-[740px]" : "max-w-4xl"}`}>
 
-        {post ? (
-          <motion.div
-            initial={{ opacity: 0, x: -15 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-1.5 mb-8 text-sm font-semibold text-gray-500"
-          >
-            <Link
-              to="/"
-              className="flex items-center gap-1.5 px-3 py-1.5 -ml-3 rounded-xl hover:text-violet-700 hover:bg-violet-50 transition-all duration-200"
+          {post ? (
+            <motion.div
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center justify-between gap-4 mb-8 text-sm font-semibold text-gray-500"
             >
-              <ArrowLeft size={16} />
-              Home
-            </Link>
-
-            {post.category && (
-              <>
-                <span className="text-gray-300">/</span>
+              <div className="flex items-center gap-1.5">
                 <Link
-                  to={`/category/${post.category.slug}`}
-                  className="px-3 py-1.5 rounded-xl hover:text-violet-700 hover:bg-violet-50 transition-all duration-200"
+                  to="/"
+                  className="flex items-center gap-1.5 px-3 py-1.5 -ml-3 rounded-xl hover:text-amber-700 hover:bg-amber-50/60 transition-all duration-200"
                 >
-                  {post.category.name}
+                  <ArrowLeft size={16} />
+                  Home
                 </Link>
-              </>
-            )}
-          </motion.div>
-        ) : (
-          <div className="flex items-center gap-3 mb-8 animate-pulse">
-            <div className="h-6 bg-gray-200 rounded-lg w-20"></div>
-            <div className="text-gray-200">/</div>
-            <div className="h-6 bg-gray-200 rounded-lg w-24"></div>
-          </div>
-        )}
 
-        {/* Isolated Blog Content Loader */}
-        {!post ? (
-          <div className="animate-pulse mb-16">
-            <div className="w-full h-64 md:h-96 bg-gray-200 rounded-3xl mb-8"></div>
-            <div className="h-6 bg-gray-200 rounded w-32 mb-6"></div>
-            <div className="h-10 bg-gray-200 rounded w-full md:w-3/4 mb-6"></div>
-            <div className="space-y-4 mt-8">
-              <div className="h-4 bg-gray-200 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                {post.category && (
+                  <>
+                    <span className="text-gray-300">/</span>
+                    <Link
+                      to={`/category/${post.category.slug}`}
+                      className="px-3 py-1.5 rounded-xl hover:text-amber-700 hover:bg-amber-50/60 transition-all duration-200"
+                    >
+                      {post.category.name}
+                    </Link>
+                  </>
+                )}
+              </div>
+
+              {/* Reading Mode Toggle Control */}
+              <button
+                type="button"
+                onClick={() => setReadingMode(!readingMode)}
+                aria-label={readingMode ? "Exit Reading Mode" : "Reading Mode"}
+                title={readingMode ? "Exit Reading Mode" : "Enable Reading Mode"}
+                className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs ${
+                  readingMode
+                    ? "bg-[#4A2B4D] text-white hover:bg-[#361f38]"
+                    : "bg-amber-100/80 text-amber-900 border border-amber-200/80 hover:bg-amber-200/80"
+                }`}
+              >
+                {readingMode ? <BookOpenCheck size={14} className="text-amber-400" /> : <BookOpen size={14} />}
+                <span>{readingMode ? "Exit Reading Mode" : "Reading Mode"}</span>
+              </button>
+            </motion.div>
+          ) : (
+            <div className="flex items-center gap-3 mb-8 animate-pulse">
+              <div className="h-6 bg-gray-200 rounded-lg w-20"></div>
+              <div className="text-gray-200">/</div>
+              <div className="h-6 bg-gray-200 rounded-lg w-24"></div>
             </div>
-          </div>
-        ) : (
-          <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
-            {post.coverImage && (
-              <motion.img
-                variants={fadeUpVariant}
-                src={post.coverImage}
-                alt={post.title}
-                className="w-full h-64 md:h-[450px] object-cover rounded-3xl mb-8 shadow-sm"
-              />
-            )}
+          )}
 
-            <motion.div variants={fadeUpVariant} className="flex justify-between items-center mb-6">
-              <span className="bg-violet-50 text-violet-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                {post.category?.name || "Article"}
-              </span>
-
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="bg-white border border-gray-200 text-sm text-gray-700 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-violet-500 outline-none cursor-pointer hover:bg-gray-50"
-              >
-                <option value="en">English</option>
-                <option value="hi">हिन्दी (Hindi)</option>
-                <option value="mr">मराठी (Marathi)</option>
-                <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
-                <option value="gu">ગુજરાતી (Gujarati)</option>
-                <option value="ta">தமிழ் (Tamil)</option>
-              </select>
-            </motion.div>
-
-            <motion.h1 variants={fadeUpVariant} className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-              {post.title}
-            </motion.h1>
-
-            <motion.div variants={fadeUpVariant} className="mt-6 flex flex-wrap items-center gap-5 text-sm text-gray-500 border-y border-gray-100 py-4">
-              <div className="flex items-center gap-1.5 font-medium text-gray-700">
-                <User size={16} className="text-violet-500" />
-                <span>{post.author.firstName} {post.author.lastName}</span>
+          {/* Isolated Blog Content Loader */}
+          {!post ? (
+            <div className="animate-pulse mb-16">
+              <div className="w-full h-64 md:h-96 bg-gray-200 rounded-3xl mb-8"></div>
+              <div className="h-6 bg-gray-200 rounded w-32 mb-6"></div>
+              <div className="h-10 bg-gray-200 rounded w-full md:w-3/4 mb-6"></div>
+              <div className="space-y-4 mt-8">
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Clock size={16} />
-                <span>{post.readingTime} min read</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Eye size={16} />
-                <span>{post.views}</span>
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleLike}
-                disabled={liked}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-colors ml-auto md:ml-0 ${liked ? "bg-red-50 text-red-500 cursor-default" : "hover:bg-gray-50 text-gray-500"
+            </div>
+          ) : (
+            <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
+              {post.coverImage && (
+                <motion.img
+                  variants={fadeUpVariant}
+                  src={post.coverImage}
+                  alt={post.title}
+                  className={`w-full object-cover rounded-3xl mb-8 shadow-sm transition-all duration-300 ${
+                    readingMode ? "h-56 md:h-[360px]" : "h-64 md:h-[450px]"
                   }`}
+                />
+              )}
+
+              <motion.div variants={fadeUpVariant} className="flex justify-between items-center mb-6">
+                <span className="bg-amber-50 text-amber-800 border border-amber-200/60 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                  {post.category?.name || "Article"}
+                </span>
+
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className="bg-white border border-gray-200 text-sm text-gray-700 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer hover:bg-gray-50"
+                >
+                  <option value="en">English</option>
+                  <option value="hi">हिन्दी (Hindi)</option>
+                  <option value="mr">मराठी (Marathi)</option>
+                  <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                  <option value="gu">ગુજરાતી (Gujarati)</option>
+                  <option value="ta">தமிழ் (Tamil)</option>
+                </select>
+              </motion.div>
+
+              <motion.h1
+                variants={fadeUpVariant}
+                className={`font-extrabold leading-tight transition-all duration-300 ${
+                  readingMode
+                    ? "text-3xl md:text-4xl text-[#1C1612] font-serif"
+                    : "text-3xl md:text-5xl text-gray-900"
+                }`}
               >
-                <motion.div animate={liked ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
-                  <Heart size={16} fill={liked ? "currentColor" : "none"} className={liked ? "text-red-500" : ""} />
-                </motion.div>
-                <span className="font-semibold">{post.likes}</span>
-              </motion.button>
+                {post.title}
+              </motion.h1>
+
+              <motion.div variants={fadeUpVariant} className="mt-6 flex flex-wrap items-center gap-5 text-sm text-gray-500 border-y border-gray-200/80 py-4">
+                <div className="flex items-center gap-1.5 font-medium text-gray-700">
+                  <User size={16} className="text-amber-600" />
+                  <span>{post.author.firstName} {post.author.lastName}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Clock size={16} />
+                  <span>{post.readingTime} min read</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Eye size={16} />
+                  <span>{post.views}</span>
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleLike}
+                  disabled={liked}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-colors ml-auto md:ml-0 ${
+                    liked ? "bg-red-50 text-red-500 cursor-default" : "hover:bg-gray-100/60 text-gray-500"
+                  }`}
+                >
+                  <motion.div animate={liked ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
+                    <Heart size={16} fill={liked ? "currentColor" : "none"} className={liked ? "text-red-500" : ""} />
+                  </motion.div>
+                  <span className="font-semibold">{post.likes}</span>
+                </motion.button>
+              </motion.div>
+
+              <motion.p
+                variants={fadeUpVariant}
+                className={`mt-8 text-lg font-serif italic border-l-4 border-amber-500 pl-5 transition-all duration-300 ${
+                  readingMode ? "text-[#3D352E]" : "text-gray-600"
+                }`}
+              >
+                {post.excerpt}
+              </motion.p>
+
+              <motion.article
+                variants={fadeUpVariant}
+                className={`prose max-w-none mt-10 mb-16 transition-all duration-300 ${
+                  readingMode
+                    ? "prose-lg font-serif leading-[1.85] text-[#2C2622] prose-headings:font-serif prose-headings:text-[#1C1612] prose-a:text-amber-800"
+                    : "prose-lg prose-amber text-gray-800"
+                }`}
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+              <ShareButtons title={post.title} />
             </motion.div>
+          )}
 
-            <motion.p variants={fadeUpVariant} className="mt-8 text-lg text-gray-600 font-serif italic border-l-4 border-violet-400 pl-5">
-              {post.excerpt}
-            </motion.p>
+          {/* RELATED POSTS SECTION */}
+          {relatedPosts && relatedPosts.length > 0 && !readingMode && (
+            <div className="mt-16 border-t border-gray-200 pt-12">
+              <RelatedPosts posts={relatedPosts} />
+            </div>
+          )}
 
-            <motion.article
-              variants={fadeUpVariant}
-              className="prose prose-lg prose-violet max-w-none mt-10 mb-16 text-gray-800"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
-            <ShareButtons title={post.title} />
-          </motion.div>
-        )}
+          {/* Comment section */}
+          {!readingMode && (
+            <div className="mt-12 border-t border-gray-200 pt-10">
+              <div className="flex items-center gap-2 mb-8">
+                <h2 className="text-2xl font-bold text-gray-900">Discussion</h2>
+                <span className="bg-gray-100 text-gray-600 text-sm font-semibold px-2.5 py-0.5 rounded-full">
+                  {comments.length}
+                </span>
+              </div>
 
-        {/* RELATED POSTS SECTION */}
-        {relatedPosts && relatedPosts.length > 0 && (
-          <div className="mt-16 border-t border-gray-200 pt-12">
-            <RelatedPosts posts={relatedPosts} />
-          </div>
-        )}
+              <CommentBox
+                publicUser={publicUser}
+                commentForm={commentForm}
+                handleCommentChange={handleCommentChange}
+                handleCommentSubmit={handleCommentSubmit}
+                setCommentForm={setCommentForm}
+              />
 
-        {/* Comment section stays interactive, avoiding full-page loading locks */}
-        <div className="mt-12 border-t border-gray-200 pt-10">
-          <div className="flex items-center gap-2 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">Discussion</h2>
-            <span className="bg-gray-100 text-gray-600 text-sm font-semibold px-2.5 py-0.5 rounded-full">
-              {comments.length}
-            </span>
-          </div>
+              <div className="mt-8">
+                <CommentList
+                  comments={comments}
+                  publicUser={publicUser}
+                  editingComment={editingComment}
+                  editContent={editContent}
+                  setEditContent={setEditContent}
+                  replyingTo={replyingTo}
+                  commentForm={commentForm}
+                  handleCommentChange={handleCommentChange}
+                  handleCommentSubmit={handleCommentSubmit}
+                  onUpdate={handleUpdate}
+                  onCancel={handleCancelEdit}
+                  onEdit={handleEdit}
+                  onDelete={requestDelete}
+                  onReply={handleReply}
+                  onCancelReply={handleCancelReply}
+                />
 
-          <CommentBox
-            publicUser={publicUser}
-            commentForm={commentForm}
-            handleCommentChange={handleCommentChange}
-            handleCommentSubmit={handleCommentSubmit}
-            setCommentForm={setCommentForm}
-          />
-
-          <div className="mt-8">
-            <CommentList
-              comments={comments}
-              publicUser={publicUser}
-              editingComment={editingComment}
-              editContent={editContent}
-              setEditContent={setEditContent}
-              replyingTo={replyingTo}
-              commentForm={commentForm}
-              handleCommentChange={handleCommentChange}
-              handleCommentSubmit={handleCommentSubmit}
-              onUpdate={handleUpdate}
-              onCancel={handleCancelEdit}
-              onEdit={handleEdit}
-              onDelete={requestDelete}
-              onReply={handleReply}
-              onCancelReply={handleCancelReply}
-            />
-
-            <DeleteModal
-              isOpen={commentToDelete !== null}
-              onClose={() => setCommentToDelete(null)}
-              onConfirm={confirmDelete}
-            />
-          </div>
-
+                <DeleteModal
+                  isOpen={commentToDelete !== null}
+                  onClose={() => setCommentToDelete(null)}
+                  onConfirm={confirmDelete}
+                />
+              </div>
+            </div>
+          )}
         </div>
-
       </div>
     </>
   );
