@@ -1,11 +1,12 @@
 import Sidebar from "../components/admin/Sidebar";
 import Navbar from "../components/admin/Navbar";
 import { Outlet } from "react-router-dom";
+import SEO from "../components/SEO";
 
 export default function AdminLayout() {
   return (
     <div className="flex h-screen bg-gray-100">
-
+      <SEO title="Admin Console" noindex={true} />
       <Sidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">

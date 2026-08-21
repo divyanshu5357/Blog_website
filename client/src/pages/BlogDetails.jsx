@@ -17,6 +17,7 @@ import { usePublicUser } from "../context/PublicUserContext";
 import CommentBox from "../components/comments/CommentBox";
 import CommentList from "../components/comments/CommentList";
 import { motion, useScroll } from "framer-motion";
+import SEO from "../components/SEO";
 
 const fadeUpVariant = {
   hidden: { opacity: 0, y: 15 },
@@ -147,6 +148,15 @@ export default function BlogDetails() {
 
   return (
     <>
+      {post && (
+        <SEO
+          title={post.seoTitle || post.title}
+          description={post.seoDescription || post.excerpt}
+          image={post.coverImage}
+          type="article"
+          article={post}
+        />
+      )}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-violet-600 z-50 origin-left"
         style={{ scaleX: scrollYProgress }}

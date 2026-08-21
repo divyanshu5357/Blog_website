@@ -17,6 +17,7 @@ import { startReminderCron } from "./cron/reminderCron.js";
 import { startSessionStatusCron } from "./cron/sessionStatusCron.js";
 import subscriberRoutes from "./modules/subscribers/subscriber.routes.js";
 import settingsRoutes from "./modules/settings/settings.routes.js";
+import seoRoutes from "./modules/seo/seo.routes.js";
 import passport from "./modules/public-auth/passport.js";
 import publicAuthRoutes from "./modules/public-auth/public-auth.routes.js";
 
@@ -70,6 +71,7 @@ app.use("/api/search", searchRoutes);
 app.use(  "/api/live-sessions",  liveSessionRoutes);
 app.use("/api/subscribers", subscriberRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/", seoRoutes);
 app.use(errorHandler);
 startReminderCron();
 startSessionStatusCron();

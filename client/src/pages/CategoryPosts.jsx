@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { getCategoryPosts } from "../services/category.service";
+import SEO from "../components/SEO";
 
 export default function CategoryPosts() {
 
@@ -25,8 +26,14 @@ export default function CategoryPosts() {
     }
   };
 
+  const categoryName = category?.name || slug.replaceAll("-", " ");
+
   return (
     <div className="max-w-7xl mx-auto py-16 px-5">
+      <SEO
+        title={`${categoryName} Articles`}
+        description={category?.description || `Explore articles, guides, and tutorials under ${categoryName}.`}
+      />
       <h1 className="text-4xl font-bold mb-10 capitalize">
         {slug.replaceAll("-", " ")}
       </h1>

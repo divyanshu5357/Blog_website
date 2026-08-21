@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/auth.service";
 import toast from "react-hot-toast";
+import SEO from "../components/SEO";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -60,6 +61,7 @@ navigate("/admin/dashboard");
         background: "#f5f5f5",
       }}
     >
+      <SEO title="Admin Login" noindex={true} />
       <form
         onSubmit={handleSubmit}
         style={{
