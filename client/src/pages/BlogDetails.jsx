@@ -86,7 +86,7 @@ export default function BlogDetails() {
       if (currentPath && currentPath.startsWith("/") && !currentPath.startsWith("//")) {
         localStorage.setItem("redirectAfterLogin", currentPath);
       }
-      window.location.href = `${API_BASE_URL}/public-auth/google`;
+      window.location.href = `${API_BASE_URL}/public-auth/google?redirect=${encodeURIComponent(currentPath)}`;
       return;
     }
     try {

@@ -19,10 +19,12 @@ export default function GoogleSuccess() {
       // Hydrate PublicUserContext before redirecting so user is immediately authenticated
       const user = await fetchPublicUser(token);
 
+      const queryRedirect = params.get("redirect");
       const savedRedirect = localStorage.getItem("redirectAfterLogin");
       localStorage.removeItem("redirectAfterLogin");
 
-      const safeUrl = sanitizeRedirectUrl(savedRedirect);
+      const targetPath = queryRedirect || savedRedirect || "/";
+      const safeUrl = sanitizeRedirectUrl(targetPath);
 
       if (user || token) {
         navigate(safeUrl, { replace: true });

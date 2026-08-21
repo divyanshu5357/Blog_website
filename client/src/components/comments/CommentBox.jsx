@@ -22,7 +22,8 @@ export default function CommentBox({
     if (currentPath && currentPath.startsWith("/") && !currentPath.startsWith("//")) {
       localStorage.setItem("redirectAfterLogin", currentPath);
     }
-    window.location.href = `${API_BASE_URL}/public-auth/google`;
+    const targetUrl = `${API_BASE_URL}/public-auth/google?redirect=${encodeURIComponent(currentPath)}`;
+    window.location.href = targetUrl;
   };
 
   return (
