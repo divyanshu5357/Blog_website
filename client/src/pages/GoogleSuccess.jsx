@@ -26,7 +26,7 @@ export default function GoogleSuccess() {
       const targetPath = queryRedirect || savedRedirect || "/";
       const safeUrl = sanitizeRedirectUrl(targetPath);
 
-      if (user || token) {
+      if (user) {
         navigate(safeUrl, { replace: true });
       } else {
         setError(true);
