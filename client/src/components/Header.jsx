@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Sparkles, Users, ArrowUpRight } from "lucide-react";
+import { Menu, X, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,7 +19,6 @@ export default function Header() {
     { key: "contact", href: "#contact", label: t("nav.contact") || "Contact" },
   ];
 
-  // Track scroll state for enhanced glassmorphism effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -28,38 +27,45 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleSubscribeClick = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    const element = document.getElementById("contact");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.location.href = "/#contact";
+    }
+  };
+
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-white/85 backdrop-blur-md border-b border-slate-200/60 shadow-sm py-3"
-          : "bg-white/70 backdrop-blur-sm border-b border-slate-100/80 py-4.5"
+          ? "bg-[#fefaf8]/95 backdrop-blur-md border-b border-[#4A2B4D]/15 shadow-sm py-3.5"
+          : "bg-[#fefaf8]/90 backdrop-blur-sm border-b border-[#4A2B4D]/10 py-4.5"
       }`}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 lg:px-12">
-        {/* Logo (Left) */}
-        <a href="#home" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20 group-hover:scale-105 transition-transform duration-200">
-            <Sparkles size={18} />
-          </div>
-          <span className="font-serif font-extrabold text-2xl tracking-tight text-indigo-950 group-hover:text-indigo-600 transition-colors duration-200">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-5 md:px-8">
+        {/* Brand Text Logo (Left) - Clean & Elegant Text Only */}
+        <a href="#home" className="group">
+          <span className="font-serif font-extrabold text-2xl md:text-3xl tracking-tight text-[#4A2B4D] group-hover:text-amber-600 transition-colors duration-200">
             AARAMBH
           </span>
         </a>
 
         {/* Center Navigation Links (Desktop) */}
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-7">
           {navLinks.map((item) => (
             <a
               key={item.key}
               href={item.href}
-              className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors duration-200 relative group py-1"
+              className="text-sm font-semibold text-[#4A2B4D]/80 hover:text-amber-600 transition-colors duration-200"
             >
               {item.label}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 rounded-full group-hover:w-full transition-all duration-200" />
             </a>
           ))}
         </nav>
@@ -68,60 +74,61 @@ export default function Header() {
         <div className="hidden lg:flex items-center gap-5">
           <LanguageSwitcher />
 
+          {/* High Contrast Primary CTA Button redirecting to Subscribe section */}
           <a
-            href="#community"
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-5 py-2.5 rounded-full shadow-md shadow-indigo-600/15 hover:shadow-lg hover:shadow-indigo-600/25 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+            href="#contact"
+            onClick={handleSubscribeClick}
+            className="inline-flex items-center gap-2 bg-[#4A2B4D] hover:bg-[#361f38] text-white font-semibold text-xs md:text-sm px-5 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer"
           >
-            <Users size={16} />
-            <span>Join Community</span>
+            <Mail size={15} className="text-amber-400" />
+            <span className="text-white font-semibold">Subscribe</span>
           </a>
         </div>
 
         {/* Mobile Menu Toggle Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2.5 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+          className="lg:hidden p-2 rounded-lg text-[#4A2B4D] hover:bg-[#4A2B4D]/5 transition-colors cursor-pointer"
           aria-label="Toggle navigation menu"
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Menu Dropdown */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="lg:hidden bg-white/95 backdrop-blur-lg border-b border-slate-200/80 overflow-hidden shadow-xl"
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="lg:hidden bg-[#fefaf8] border-b border-[#4A2B4D]/15 overflow-hidden shadow-lg"
           >
-            <div className="px-6 py-6 space-y-4">
-              <nav className="flex flex-col space-y-3">
+            <div className="px-5 py-5 space-y-4">
+              <nav className="flex flex-col space-y-2">
                 {navLinks.map((item) => (
                   <a
                     key={item.key}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between text-base font-semibold text-slate-800 hover:text-indigo-600 transition-colors py-2 border-b border-slate-100"
+                    className="text-base font-semibold text-[#4A2B4D] hover:text-amber-600 transition-colors py-2 border-b border-[#4A2B4D]/5"
                   >
-                    <span>{item.label}</span>
-                    <ArrowUpRight size={16} className="text-slate-400" />
+                    {item.label}
                   </a>
                 ))}
               </nav>
 
-              <div className="pt-4 flex items-center justify-between gap-4 border-t border-slate-200/60">
+              <div className="pt-3 flex items-center justify-between gap-4 border-t border-[#4A2B4D]/10">
                 <LanguageSwitcher />
 
                 <a
-                  href="#community"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-5 py-2.5 rounded-full shadow-md transition-all active:scale-95"
+                  href="#contact"
+                  onClick={handleSubscribeClick}
+                  className="inline-flex items-center gap-2 bg-[#4A2B4D] hover:bg-[#361f38] text-white font-semibold text-sm px-5 py-2.5 rounded-full shadow-md transition-all active:scale-95 cursor-pointer"
                 >
-                  <Users size={16} />
-                  <span>Join Community</span>
+                  <Mail size={15} className="text-amber-400" />
+                  <span className="text-white font-semibold">Subscribe</span>
                 </a>
               </div>
             </div>
