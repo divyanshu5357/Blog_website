@@ -17,16 +17,16 @@ function LanguageSwitcher() {
     : "en";
 
   return (
-    <div className="relative inline-flex items-center gap-2 bg-[#4A2B4D]/5 hover:bg-[#4A2B4D]/10 px-3 py-1.5 rounded-full border border-[#4A2B4D]/15 transition-all cursor-pointer">
-      <Globe size={14} className="text-[#4A2B4D] flex-shrink-0" />
+    <div className="relative inline-flex items-center gap-2 bg-[#4A2B4D]/5 hover:bg-[#4A2B4D]/10 px-3.5 py-2 rounded-full border border-[#4A2B4D]/15 transition-all cursor-pointer shadow-xs">
+      <Globe size={16} className="text-[#4A2B4D] flex-shrink-0" />
       <select
         value={selected}
         onChange={(e) => i18n.changeLanguage(e.target.value)}
         aria-label={t("language.ariaLabel") || "Select language"}
-        className="bg-transparent text-xs font-semibold text-[#4A2B4D] cursor-pointer focus:outline-none pr-1"
+        className="bg-transparent text-sm font-bold text-[#4A2B4D] cursor-pointer focus:outline-none pr-1"
       >
         {supportedLanguages.map((language) => (
-          <option key={language.code} value={language.code} className="bg-white text-slate-800">
+          <option key={language.code} value={language.code} className="bg-white text-slate-800 font-medium">
             {language.short} - {t(language.labelKey)}
           </option>
         ))}
