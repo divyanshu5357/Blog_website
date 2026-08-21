@@ -1,4 +1,4 @@
-import { LogOut, X } from "lucide-react"; // <-- Import X
+import { LogOut, X } from "lucide-react";
 import EmojiPickerButton from "./EmojiPickerButton";
 import { API_BASE_URL } from "../../config/api";
 
@@ -9,11 +9,20 @@ export default function CommentBox({
   handleCommentChange,
   handleCommentSubmit,
   autoFocus = false,
-  onCancel, // <-- Receives the cancel function
+  onCancel,
 }) {
   const signOut = () => {
     localStorage.removeItem("publicToken");
+    localStorage.removeItem("publicUser");
     window.location.reload();
+  };
+
+  const handleGoogleLogin = () => {
+    const currentPath = window.location.pathname + window.location.search + window.location.hash;
+    if (currentPath && currentPath.startsWith("/") && !currentPath.startsWith("//")) {
+      localStorage.setItem("redirectAfterLogin", currentPath);
+    }
+    window.location.href = `${API_BASE_URL}/public-auth/google`;
   };
 
   return (
@@ -31,10 +40,9 @@ export default function CommentBox({
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() =>
-                (window.location.href = `${API_BASE_URL}/public-auth/google`)
-              }
-              className="flex items-center gap-3 border border-gray-300 rounded-lg px-5 py-2.5 hover:bg-gray-50 transition-colors"
+              onClick={handleGoogleLogin}
+              type="button"
+              className="flex items-center gap-3 border border-gray-300 rounded-lg px-5 py-2.5 hover:bg-gray-50 transition-colors cursor-pointer"
             >
               <img
                 src="https://developers.google.com/identity/images/g-logo.png"
@@ -46,12 +54,11 @@ export default function CommentBox({
               </span>
             </button>
             
-            {/* CROSS BUTTON FOR GUEST */}
             {onCancel && (
               <button
                 type="button"
                 onClick={onCancel}
-                className="text-gray-400 hover:text-gray-600 p-2"
+                className="text-gray-400 hover:text-gray-600 p-2 cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -63,7 +70,7 @@ export default function CommentBox({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
-                src={publicUser.avatar}
+                src={publicUser.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(publicUser.firstName || "User")}
                 alt=""
                 className="w-10 h-10 rounded-full border border-gray-100"
               />
@@ -78,19 +85,19 @@ export default function CommentBox({
             <div className="flex items-center gap-4">
               <button
                 onClick={signOut}
-                className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-red-500 transition-colors"
+                type="button"
+                className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
                 title="Sign Out"
               >
                 <LogOut size={16} />
                 <span className="hidden sm:inline">Sign Out</span>
               </button>
 
-              {/* CROSS BUTTON FOR LOGGED IN USER */}
               {onCancel && (
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="text-gray-400 hover:text-red-500 transition-colors"
+                  className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
                   title="Cancel Reply"
                 >
                   <X size={20} />
@@ -107,32 +114,25 @@ export default function CommentBox({
               onChange={handleCommentChange}
               placeholder="Share your thoughts..."
               autoFocus={autoFocus}
-              className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all outline-none resize-y min-h-[80px] text-gray-700"
+              className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all outline-none resize-y min-h-[80px] text-gray-700"
               required
             />
 
-              <div className="flex justify-between items-center mt-3">
-
-  <EmojiPickerButton
-    setCommentForm={setCommentForm}
-  />
-
-  <span className="text-gray-500">
-    {commentForm.content.length}/1000
-  </span>
-
-</div>
             <div className="flex justify-between items-center mt-3">
-              <p className="text-xs text-gray-400 font-medium">
-                {commentForm.content.length}/1000
-              </p>
+              <EmojiPickerButton setCommentForm={setCommentForm} />
 
-              <button
-                type="submit"
-                className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                Post Comment
-              </button>
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-gray-400 font-medium">
+                  {commentForm.content.length}/1000
+                </span>
+
+                <button
+                  type="submit"
+                  className="bg-[#4A2B4D] hover:bg-[#361f38] text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer shadow-xs"
+                >
+                  Post Comment
+                </button>
+              </div>
             </div>
           </form>
         </>

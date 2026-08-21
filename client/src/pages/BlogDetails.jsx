@@ -82,6 +82,10 @@ export default function BlogDetails() {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!publicUser) {
+      const currentPath = window.location.pathname + window.location.search + window.location.hash;
+      if (currentPath && currentPath.startsWith("/") && !currentPath.startsWith("//")) {
+        localStorage.setItem("redirectAfterLogin", currentPath);
+      }
       window.location.href = `${API_BASE_URL}/public-auth/google`;
       return;
     }
