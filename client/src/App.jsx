@@ -29,10 +29,12 @@ import CreateLiveSession from "./admin/CreateLiveSession";
 import Subscribers from "./admin/Subscribers";
 import Media from "./admin/Media";
 import Settings from "./admin/Settings";
+import SmoothScroll from "./components/SmoothScroll";
 
 function App() {
   return (
     <>
+      <SmoothScroll />
       <Toaster position="top-right" />
       <Routes>
         {/* Public Routes */}
