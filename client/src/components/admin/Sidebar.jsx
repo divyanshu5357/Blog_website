@@ -99,7 +99,7 @@ export default function Sidebar() {
       <button
         type="button"
         onClick={handleLogout}
-        className="flex items-center gap-3 p-6 border-t border-slate-700 hover:bg-red-600 transition flex-shrink-0 w-full text-left"
+        className="flex items-center gap-3 p-6 border-t border-slate-700 hover:bg-red-600 transition flex-shrink-0 w-full text-left cursor-pointer"
       >
         <LogOut size={20} />
         Logout

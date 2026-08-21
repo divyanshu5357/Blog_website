@@ -5,7 +5,7 @@ import SEO from "../components/SEO";
 
 export default function AdminLayout() {
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="admin-layout flex h-screen w-full bg-gray-100 overflow-hidden">
       <SEO title="Admin Console" noindex={true} />
       <Sidebar />
 
