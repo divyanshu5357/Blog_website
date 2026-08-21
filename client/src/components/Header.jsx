@@ -1,96 +1,133 @@
-import React from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, Sparkles, Users, ArrowUpRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { navItems } from "../data/navItems";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { motion, AnimatePresence } from "framer-motion";
 
-function Header() {
-  const [open, setOpen] = React.useState(false);
+export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { t } = useTranslation();
 
+  // Navigation Items
+  const navLinks = [
+    { key: "home", href: "#home", label: t("nav.home") || "Home" },
+    { key: "about", href: "#about-aarambh", label: t("nav.about") || "About" },
+    { key: "blogs", href: "#blogs", label: t("nav.blogs") || "Blogs" },
+    { key: "sessions", href: "#live-sessions", label: t("nav.sessions") || "Live Sessions" },
+    { key: "resources", href: "#resources", label: t("nav.resources") || "Resources" },
+    { key: "contact", href: "#contact", label: t("nav.contact") || "Contact" },
+  ];
+
+  // Track scroll state for enhanced glassmorphism effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <motion.header 
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 100, damping: 20 }}
-      // Using a warm, soft background color to match the images
-      className="fixed top-0 w-full z-50 bg-[#fefaf8]/95 backdrop-blur-md border-b border-[#4A2B4D]/10 shadow-sm"
+    <motion.header
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-white/85 backdrop-blur-md border-b border-slate-200/60 shadow-sm py-3"
+          : "bg-white/70 backdrop-blur-sm border-b border-slate-100/80 py-4.5"
+      }`}
     >
-      <div className="max-w-[1400px] mx-auto px-5 py-4 flex justify-between items-center gap-4 xl:gap-8">
-        
-        {/* Logo Block - Adjusted width and removed line-clamp so text wraps perfectly to 3 lines */}
-        <div className="flex-shrink-0 w-[260px] md:w-[380px] xl:w-[480px]">
-          <a href="#home" aria-label={t("brand.homeAriaLabel")} className="block">
-            <h1 className="text-xl md:text-2xl xl:text-3xl font-serif font-bold text-[#4A2B4D] tracking-tight leading-tight mb-1.5 md:mb-2">
-              {t("brand.title")}
-            </h1>
-            <p className="text-[11px] xl:text-[13.5px] text-slate-500 font-medium leading-relaxed hidden md:block">
-              {t("brand.description")}
-            </p>
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 lg:px-12">
+        {/* Logo (Left) */}
+        <a href="#home" className="flex items-center gap-2.5 group">
+          <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20 group-hover:scale-105 transition-transform duration-200">
+            <Sparkles size={18} />
+          </div>
+          <span className="font-serif font-extrabold text-2xl tracking-tight text-indigo-950 group-hover:text-indigo-600 transition-colors duration-200">
+            AARAMBH
+          </span>
+        </a>
+
+        {/* Center Navigation Links (Desktop) */}
+        <nav className="hidden lg:flex items-center gap-8">
+          {navLinks.map((item) => (
+            <a
+              key={item.key}
+              href={item.href}
+              className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors duration-200 relative group py-1"
+            >
+              {item.label}
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 rounded-full group-hover:w-full transition-all duration-200" />
+            </a>
+          ))}
+        </nav>
+
+        {/* Actions (Right) */}
+        <div className="hidden lg:flex items-center gap-5">
+          <LanguageSwitcher />
+
+          <a
+            href="#community"
+            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-5 py-2.5 rounded-full shadow-md shadow-indigo-600/15 hover:shadow-lg hover:shadow-indigo-600/25 transition-all transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+          >
+            <Users size={16} />
+            <span>Join Community</span>
           </a>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center justify-end flex-1 gap-6 xl:gap-8" aria-label={t("nav.primaryNavigation")}>
-          {/* Filtering out the 'community' item dynamically */}
-          {navItems.filter(item => item.key !== "community").map((item) => (
-            <motion.a 
-              key={item.key} 
-              href={item.href}
-              whileHover={{ y: -2, color: "#d97706" }} // Amber hover effect
-              className="text-[#4A2B4D] font-semibold transition-colors relative flex items-center gap-1.5 whitespace-nowrap text-sm xl:text-[15px]"
-            >
-              {t(`nav.${item.key}`)}
-            </motion.a>
-          ))}
-          
-          {/* Vertical Separator line matching the image */}
-          <div className="pl-4 xl:pl-6 border-l border-gray-300 h-8 flex items-center">
-            <LanguageSwitcher />
-          </div>
-        </nav>
-
-        {/* Mobile Menu Toggle */}
-        <button 
-          className="lg:hidden p-2 text-[#4A2B4D] hover:bg-[#4A2B4D]/5 rounded-lg transition-colors flex-shrink-0"
-          type="button" 
-          aria-label={t("nav.toggleNavigation")} 
-          onClick={() => setOpen(!open)}
+        {/* Mobile Menu Toggle Button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden p-2.5 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+          aria-label="Toggle navigation menu"
         >
-          {open ? <X size={24} /> : <Menu size={24} />}
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Navigation Dropdown */}
+      {/* Mobile Menu Drawer */}
       <AnimatePresence>
-        {open && (
+        {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden overflow-hidden bg-[#fefaf8] border-b border-[#4A2B4D]/10"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="lg:hidden bg-white/95 backdrop-blur-lg border-b border-slate-200/80 overflow-hidden shadow-xl"
           >
-            <nav className="flex flex-col px-5 py-6 gap-4">
-              {navItems.filter(item => item.key !== "community").map((item) => (
-                <a 
-                  key={item.key} 
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="text-lg font-semibold text-[#4A2B4D] hover:text-amber-600 transition-colors flex items-center gap-2"
-                >
-                  {t(`nav.${item.key}`)}
-                </a>
-              ))}
-              <div className="pt-4 mt-2 border-t border-gray-200">
+            <div className="px-6 py-6 space-y-4">
+              <nav className="flex flex-col space-y-3">
+                {navLinks.map((item) => (
+                  <a
+                    key={item.key}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between text-base font-semibold text-slate-800 hover:text-indigo-600 transition-colors py-2 border-b border-slate-100"
+                  >
+                    <span>{item.label}</span>
+                    <ArrowUpRight size={16} className="text-slate-400" />
+                  </a>
+                ))}
+              </nav>
+
+              <div className="pt-4 flex items-center justify-between gap-4 border-t border-slate-200/60">
                 <LanguageSwitcher />
+
+                <a
+                  href="#community"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-5 py-2.5 rounded-full shadow-md transition-all active:scale-95"
+                >
+                  <Users size={16} />
+                  <span>Join Community</span>
+                </a>
               </div>
-            </nav>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
     </motion.header>
   );
 }
-
-export default Header;
