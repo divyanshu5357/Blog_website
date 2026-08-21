@@ -1,11 +1,15 @@
 import api from "./api";
 
-export const getCurrentUser = async () => {
-  const token = localStorage.getItem("publicToken");
+export const getCurrentPublicUser = async (token) => {
+  const publicToken = token || localStorage.getItem("publicToken");
+
+  if (!publicToken) {
+    throw new Error("Public authentication token not found.");
+  }
 
   const res = await api.get("/public-auth/me", {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${publicToken}`,
     },
   });
 
